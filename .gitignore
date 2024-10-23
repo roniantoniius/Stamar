@@ -1,0 +1,7 @@
+__pycache__/
+.github/
+app/__pycache__/
+app/resources/__pycache__/
+app/services/__pycache__/
+env/
+.env

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Climate Data Table</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Climate Data</h1>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>NOSTA</th>
+                    <th>Nama Stasiun</th>
+                    <th>Tahun</th>
+                    <th>Bulan</th>
+                    <th>Tanggal</th>
+                    <th>Suhu 7</th>
+                    <th>Suhu 13</th>
+                    <th>Suhu 18</th>
+                    <th>Curah Hujan</th>
+                    <th>Cuaca</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in data %}
+                <tr>
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.nosta }}</td>
+                    <td>{{ item.namasta }}</td>
+                    <td>{{ item.tahun }}</td>
+                    <td>{{ item.bulan }}</td>
+                    <td>{{ item.tgl }}</td>
+                    <td>{{ item.suhu7 }}</td>
+                    <td>{{ item.suhu13 }}</td>
+                    <td>{{ item.suhu18 }}</td>
+                    <td>{{ item.curahhujan }}</td>
+                    <td>{{ item.cuaca }}</td>
+                    <td>
+                        <form action="{{ url_for('data_fklim_data_fklim_resource', id=item.id) }}" method="POST">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

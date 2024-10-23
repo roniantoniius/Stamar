@@ -1,0 +1,264 @@
+:root {
+  --mainColor: #122a4c;
+}
+
+body {
+  color: var(--mainColor);
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--mainColor);
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+
+::selection {
+  background-color: var(--mainColor);
+  color: #fff;
+}
+
+a {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline; /* Opsional: Tambahkan garis bawah saat di-hover */
+}
+
+.mainColor {
+  color: var(--mainColor);
+}
+
+.btn-main {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #2a82e6;
+  --bs-btn-border-color: #004da4;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #003694;
+  --bs-btn-hover-border-color: #003694;
+  --bs-btn-focus-shadow-rgb: 49, 132, 253;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #003694;
+  --bs-btn-active-border-color: #003694;
+  
+  box-shadow: -6px 10px 15px -5px rgba(167, 208, 255, 0.45);
+  border: #004da413 1px solid;
+  background-color: rgb(42, 130, 230);
+  transition: all 0.3s ease;
+}
+
+.btn-main:hover {
+  background-color: rgb(7, 66, 129);
+  box-shadow: -6px 15px 20px -5px rgba(167, 208, 255, 0.75);
+  transform: translateY(-3px);
+  text-decoration: none;
+}
+
+.btn-main:active {
+  background-color: #003694;
+  box-shadow: -6px 8px 10px -5px rgba(0, 54, 148, 0.75);
+  transform: translateY(1px);
+}
+
+
+main {
+  min-height: 100vh;
+  background-image: url("../images/background.png");
+  background-size: cover;
+  background-position: center;
+}
+
+main nav {
+  box-shadow: 0px -8px 22px 4px rgba(0, 77, 165, 0.45);
+  background-color: rgb(253 253 253) !important;
+}
+
+.navbar-toggler {
+  border: none;
+  color: var(--mainColor);
+  font-size: 1.375rem;
+}
+
+main .navbar-toggler:focus {
+  box-shadow:inset;
+}
+
+main .form-control:focus {
+  border-color: #004da413;
+  box-shadow: 0 0 0 0.25rem rgba(0, 76, 163, 0.25);
+}
+
+.boxContainer {
+  max-width: 600px;
+  margin: auto;
+  background-color: rgb(253 253 253 / 93%);
+  box-shadow: -6px 10px 15px -5px rgba(167, 208, 255, 0.45);
+  border: #004da413 1px solid;
+}
+
+#homeBox {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#homeBox:hover {
+  background-color: rgba(117, 189, 253, 0.853);
+  box-shadow: -6px 15px 20px -5px rgba(167, 208, 255, 0.75);
+  transform: translateY(-5px);
+}
+
+
+.swal-button {
+  background-color: var(--mainColor);
+  border-color: var(--mainColor);
+}
+
+.swal-button:not([disabled]):hover {
+  background-color: #003694;
+  border-color: #003694;
+}
+
+footer {
+  padding: 100px 0;
+  box-shadow: 0px -8px 22px 4px rgba(8, 45, 89, 0.09);
+}
+
+.footer-head {
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+footer ul li {
+  margin-bottom: 10px;
+}
+
+@media screen and (max-width: 400px) {
+  :root {
+    font-size: 12px;
+  }
+}
+
+/* General styles for responsive design */
+@media screen and (max-width: 1200px) {
+  .boxContainer {
+    max-width: 90%;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-size: 1.8rem; /* Adjust heading size for larger tablets */
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .boxContainer {
+    max-width: 85%;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-size: 1.6rem; /* Adjust heading size for tablets */
+  }
+
+  footer {
+    padding: 80px 0; /* Adjust padding for footer */
+  }
+
+  footer ul li {
+    margin-bottom: 8px; /* Adjust list spacing for smaller screens */
+  }
+}
+
+@media screen and (max-width: 768px) {
+  /* Mobile tablets & small devices */
+  .boxContainer {
+    max-width: 90%;
+    padding: 15px; /* Add padding for smaller devices */
+  }
+
+  main nav {
+    box-shadow: none;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-size: 1.4rem; /* Smaller heading size for mobile devices */
+  }
+
+  .btn-main {
+    font-size: 0.875rem; /* Adjust button size for smaller screens */
+    padding: 10px 20px; /* Adjust button padding */
+  }
+
+  footer {
+    padding: 60px 0; /* Adjust padding for mobile footer */
+  }
+
+  .footer-head {
+    font-size: 1rem; /* Smaller font for footer headers */
+  }
+
+  footer ul li {
+    margin-bottom: 6px; /* Tighter list spacing */
+  }
+}
+
+@media screen and (max-width: 576px) {
+  /* For mobile devices (portrait) */
+  .boxContainer {
+    max-width: 100%; /* Full width on small screens */
+    margin: 10px auto;
+    padding: 10px;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-size: 1.2rem; /* Smaller heading size for smaller devices */
+  }
+
+  main {
+    padding: 10px; /* Reduce padding */
+  }
+
+  .btn-main {
+    font-size: 0.75rem; /* Smaller button text */
+    padding: 8px 16px; /* Reduce button padding */
+  }
+
+  footer {
+    padding: 40px 0; /* Minimize footer padding */
+  }
+
+  .footer-head {
+    font-size: 0.875rem;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  /* For extra small mobile screens */
+  :root {
+    font-size: 12px;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-size: 1rem;
+  }
+
+  .boxContainer {
+    max-width: 100%;
+    padding: 5px;
+  }
+
+  .btn-main {
+    font-size: 0.7rem;
+    padding: 6px 12px;
+  }
+
+  footer {
+    padding: 30px 0;
+  }
+}

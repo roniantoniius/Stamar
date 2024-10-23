@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/logo.png') }}" />
+    <title>{% block title %}Stamar FKlim Tanjung Priok Dashboard{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/all.min.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  </head>
+  <body>
+    <main>
+      <nav class="navbar navbar-expand-lg">
+        <div class="container">
+          <img src="{{ url_for('static', filename='images/logo.png') }}" style="width: 60px; padding-right: 20px;" alt="">
+          <h3 style="padding-top: 7px;" class="mainColor text-decoration-none" href="#">Dashboard FKlim Stasiun Meteorologi Maritim Tanjung Priok</h3>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item">
+                <a class="btn btn-main" id="logOutBtn" href="./login.html">Log in</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      {% block content %}{% endblock %}
+
+      <!-- footer -->
+      <div class="container" style="padding-bottom: 200px;"></div>
+      <!-- footer -->
+      <footer style="background-color: rgb(253, 253, 253) !important; padding: 100px 0;">
+        <div class="container" style="margin-top: -40px;">
+          <div class="row">
+            <!-- Kolom pertama -->
+            <div class="col-12 col-md-3">
+              <h3 class="footer-head">BMKG Tanjung Priok</h3>
+              <p>Padamarang No. 4A, Tanjung Priok<br>Jakarta Utara<br>Jakarta 14310</p>
+              <p>Telp/Fax: (021) 43901650</p>
+              <p>Email: bmkgtanjungpriok@gmail.com</p>
+            </div>
+          
+            <!-- Kolom kedua -->
+            <div class="col-12 col-md-3">
+              <h3 class="footer-head">Link Terkait</h3>
+              <ul class="menu">
+                <li><a href="#">Maritim BMKG</a></li>
+                <li><a href="#">BIG</a></li>
+                <li><a href="#">KKP</a></li>
+                <li><a href="#">Pusdiklat BMKG</a></li>
+                <li><a href="#">STMKG</a></li>
+                <li><a href="#">INSPEKTORAT BMKG</a></li>
+              </ul>
+            </div>
+          
+            <!-- Kolom ketiga -->
+            <div class="col-12 col-md-3">
+              <h3 class="footer-head">Media Sosial</h3>
+              <ul class="list-unstyled d-flex">
+                <li><a href="#" class="me-3"><img src="{{ url_for('static', filename='images/facebook.png') }}" alt="Facebook" style="width: 24px; height: 24px;"></a></li>
+                <li><a href="#" class="me-3"><img src="{{ url_for('static', filename='images/twitter.png') }}" alt="Twitter" style="width: 24px; height: 24px;"></a></li>
+                <li><a href="#" class="me-3"><img src="{{ url_for('static', filename='images/instagram.png') }}" alt="Instagram" style="width: 24px; height: 24px;"></a></li>
+                <li><a href="#" class="me-3"><img src="{{ url_for('static', filename='images/whatsapp.png') }}" alt="Whatsapp" style="width: 24px; height: 24px;"></a></li>
+              </ul>
+            </div>
+          
+            <!-- Kolom keempat -->
+            <div class="col-12 col-md-3">
+              <h3 class="footer-head">Media</h3>
+              <iframe width="100%" height="200" src="https://www.youtube.com/embed/inmqGL0CQsg?si=bARCd-U8FSprtVup"
+                title="YouTube video player" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="border-radius: 10px;"></iframe>
+            </div>
+          </div>
+        </div>
+        <div class="footer-content text-center" style="background-color: #e0e0e0; padding: 20px; margin-top: 40px;">
+          <a href="https://bmkgtanjungpriok.info/" class="text-dark">
+            &copy; Copyright <strong>Stamar Tanjung Priok</strong>. All rights reserved.
+          </a>
+        </div>
+      </footer>
+
+    </main>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sweetalert.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+  </body>
+</html>
