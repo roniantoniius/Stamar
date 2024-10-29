@@ -13,6 +13,7 @@ from app.exts import db, mail
 from app.resources.auth import auth_namespace
 from app.resources.reset_password import reset_password_namespace
 from app.resources.index import index_blueprint
+from app.resources.tahunan import tahunan_bp
 
 def create_app():
     app = Flask(__name__)
@@ -32,6 +33,7 @@ def create_app():
     CORS(app)
 
     app.register_blueprint(index_blueprint)
+    app.register_blueprint(tahunan_bp)
 
     api = Api(app, title='Authentication API', version='1.0', doc='/docs')
     api.add_namespace(auth_namespace, path='/api/v1/auth')

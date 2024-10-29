@@ -72,13 +72,31 @@ a:hover {
 main {
   min-height: 100vh;
   background-image: url("../images/background.png");
-  background-size: cover;
-  background-position: center;
+  background-size: auto; /* Gambar akan diulang */
+  background-repeat: repeat; /* Mengulangi gambar */
+  background-position: center; /* Memposisikan gambar di tengah */
+  position: relative; /* Agar konten di dalam main dapat diposisikan relatif */
+}
+
+main::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8); /* Warna putih dengan transparansi */
+  z-index: 1; /* Pastikan berada di bawah konten */
+}
+
+main > * {
+  position: relative; /* Konten di dalam main harus memiliki posisi relatif agar berada di atas pseudo-element */
+  z-index: 2; /* Pastikan konten berada di atas lapisan transparan */
 }
 
 main nav {
   box-shadow: 0px -8px 22px 4px rgba(0, 77, 165, 0.45);
-  background-color: rgb(253 253 253) !important;
+  background-color: rgb(253, 253, 253) !important;
 }
 
 .navbar-toggler {
@@ -99,7 +117,7 @@ main .form-control:focus {
 .boxContainer {
   max-width: 600px;
   margin: auto;
-  background-color: rgb(253 253 253 / 93%);
+  background-color: rgba(217, 233, 255, 0.93);
   box-shadow: -6px 10px 15px -5px rgba(167, 208, 255, 0.45);
   border: #004da413 1px solid;
 }

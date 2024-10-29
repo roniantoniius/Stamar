@@ -1,4 +1,3 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, Text
 from sqlalchemy.sql import func
 from app.exts import db
 
