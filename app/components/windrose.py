@@ -89,29 +89,17 @@ def chart_kecepatan_angin_tahun(tahun=None, session=None):
     kecepatan_angin_rata_rata['bulan'] = pd.Categorical(kecepatan_angin_rata_rata['bulan'], categories=months, ordered=True)
     kecepatan_angin_rata_rata = kecepatan_angin_rata_rata.sort_values('bulan')
     
-    if len(tahun_range) == 1:
-        title = f'Rata-rata Kecepatan Angin Maksimum Tahun {tahun_range[0]}'
-    elif len(tahun_range) > 1:
-        if tahun_range[-1] - tahun_range[0] >= 29:
-            title = f'Data Normal Rata-rata Kecepatan Angin Maksimum Periode {tahun_range[0]} - {tahun_range[-1]}'
-        else:
-            title = f'Data Tahunan Rata-rata Kecepatan Angin Maksimum Periode {tahun_range[0]} - {tahun_range[-1]}'
+    # Prepare data for Chart.js
+    data1 = {
+        'labels': kecepatan_angin_rata_rata['bulan'].tolist(),
+        'datasets': [{
+            'label': 'Rata-rata Kecepatan Angin Maksimum',
+            'data': kecepatan_angin_rata_rata['anginkecmaks'].round(2).tolist(),
+            'borderColor': 'rgba(75, 192, 192, 1)',
+            'backgroundColor': 'rgba(75, 192, 192, 0.2)',
+            'borderWidth': 2,
+            'fill': True,
+        }]
+    }
     
-    fig = px.line(
-        kecepatan_angin_rata_rata,
-        x='bulan',
-        y='anginkecmaks',
-        markers=True,
-        title=title,
-        labels={'bulan': 'Bulan', 'anginkecmaks': 'Kecepatan Angin Maksimum'}
-    )
-    
-    fig.update_traces(text=kecepatan_angin_rata_rata['anginkecmaks'].round(2),
-                      textposition='top center')
-
-    fig.update_layout(
-        xaxis=dict(title='Bulan'),
-        yaxis=dict(title='Kecepatan Angin Maksimum'),
-    )
-
-    return fig.to_html(full_html=False)  # Kembalikan HTML visualisasi
+    return data1

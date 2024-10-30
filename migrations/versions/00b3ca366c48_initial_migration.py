@@ -1,8 +1,8 @@
-"""Create FklimData model with id primary key
+"""Initial migration
 
-Revision ID: 7c5fbd71e3b8
+Revision ID: 00b3ca366c48
 Revises: 
-Create Date: 2024-10-22 11:53:26.776074
+Create Date: 2024-10-30 22:49:18.569049
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '7c5fbd71e3b8'
+revision = '00b3ca366c48'
 down_revision = None
 branch_labels = None
 depends_on = None

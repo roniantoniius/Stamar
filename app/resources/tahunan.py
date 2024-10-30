@@ -1,7 +1,7 @@
 from app.exts import db
-from app.models import DataFklim
-from flask import Blueprint, render_template
-from app.components.windrose import visualisasi_windrose_tahun, chart_kecepatan_angin_tahun
+from flask import Blueprint, render_template, jsonify
+from app.components.windrose import chart_kecepatan_angin_tahun
+from app.components.iklimsatu import prepare_suhu_data
 
 tahunan_bp = Blueprint('tahunan', __name__)
 
@@ -9,7 +9,9 @@ tahunan_bp = Blueprint('tahunan', __name__)
 def tahunan():
     session = db.session
     tahun_range = ['1991', '2020']
-    windrose_plots = visualisasi_windrose_tahun(tahun=tahun_range, session=session)
-    kecepatan_plot = chart_kecepatan_angin_tahun(tahun=tahun_range, session=session)
+    
+    # Mengambil data untuk Chart.js
+    kecepatan_angin_data = chart_kecepatan_angin_tahun(tahun=tahun_range, session=session)
+    suhu_data = prepare_suhu_data(tahun=tahun_range, session=session)
 
-    return render_template('tahunan.html', windrose_plots=windrose_plots, kecepatan_plot=kecepatan_plot)
+    return render_template('tahunan.html', kecepatan_angin_data=kecepatan_angin_data, suhu_data=suhu_data)
