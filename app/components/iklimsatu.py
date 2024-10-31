@@ -35,58 +35,168 @@ def prepare_suhu_data(tahun=None, session=None):
         df['bulan'] = pd.Categorical(df['bulan'], categories=months, ordered=True)
         df.sort_values('bulan', inplace=True)
 
-    # Mengisi nilai NaN dengan rata-rata kolom yang bersangkutan
-    suhu_rata_rata['suhurata'].fillna(suhu_rata_rata['suhurata'].mean(), inplace=True)
-    suhu_maks_abs['suhumaks'].fillna(suhu_maks_abs['suhumaks'].mean(), inplace=True)
-    suhu_maks['suhumaks'].fillna(suhu_maks['suhumaks'].mean(), inplace=True)
-    suhu_min['suhumin'].fillna(suhu_min['suhumin'].mean(), inplace=True)
-    suhu_min_abs['suhumin'].fillna(suhu_min_abs['suhumin'].mean(), inplace=True)
-
     # Menggabungkan data untuk dikirim dalam format JSON
-    data2 = {
+    data = {
         'labels': suhu_rata_rata['bulan'].tolist(),
         'datasets': [
             {
                 'label': 'Suhu Rata-Rata',
                 'data': suhu_rata_rata['suhurata'].round(2).tolist(),
                 'borderColor': 'rgba(255, 99, 132, 1)',
-                'backgroundColor': 'rgba(255, 99, 132, 0.2)',
-                'borderWidth': 2,
-                'fill': True
+                'borderWidth': 4,
+                'fill': False
             },
             {
                 'label': 'Suhu Maksimum Absolut',
                 'data': suhu_maks_abs['suhumaks'].round(2).tolist(),
                 'borderColor': 'rgba(54, 162, 235, 1)',
-                'backgroundColor': 'rgba(54, 162, 235, 0.2)',
-                'borderWidth': 2,
-                'fill': True
+                'borderWidth': 4,
+                'fill': False
             },
             {
                 'label': 'Suhu Maksimum Rata-Rata',
                 'data': suhu_maks['suhumaks'].round(2).tolist(),
                 'borderColor': 'rgba(75, 192, 192, 1)',
-                'backgroundColor': 'rgba(75, 192, 192, 0.2)',
-                'borderWidth': 2,
-                'fill': True
+                'borderWidth': 4,
+                'fill': False
             },
             {
                 'label': 'Suhu Minimum Rata-Rata',
                 'data': suhu_min['suhumin'].round(2).tolist(),
                 'borderColor': 'rgba(153, 102, 255, 1)',
-                'backgroundColor': 'rgba(153, 102, 255, 0.2)',
-                'borderWidth': 2,
-                'fill': True
+                'borderWidth': 4,
+                'fill': False
             },
             {
                 'label': 'Suhu Minimum Absolut',
                 'data': suhu_min_abs['suhumin'].round(2).tolist(),
                 'borderColor': 'rgba(255, 159, 64, 1)',
-                'backgroundColor': 'rgba(255, 159, 64, 0.2)',
-                'borderWidth': 2,
-                'fill': True
+                'borderWidth': 4,
+                'fill': False
             }
         ]
     }
     
-    return data2
+    return data
+
+def prepare_kelembapan_data(tahun=None, session=None):
+    # Mendapatkan data dari database
+    df = session.query(DataFklim).all()
+    df = pd.DataFrame([data.to_dict() for data in df])
+    
+    # Mengonversi tahun ke list yang dapat diolah
+    if tahun is None:
+        tahun_range = df['tahun'].unique()
+    elif isinstance(tahun, str):
+        tahun_range = [int(tahun)]
+    elif isinstance(tahun, list) or isinstance(tahun, tuple):
+        tahun_range = list(range(int(tahun[0]), int(tahun[1]) + 1))
+    else:
+        raise ValueError("Input tahun harus berupa string, list, atau tuple")
+
+    # Memilih data sesuai tahun yang dipilih
+    df_year = pd.concat([df[df['tahun'] == t] for t in tahun_range])
+    df_year = df_year[(df_year['kelembapanrata'] != 0) & (df_year['kelembapanmaks'] != 0) & (df_year['kelembapanmin'] != 0)]
+    df_year['bulan'] = df_year['bulan'].apply(lambda x: calendar.month_abbr[x])
+    
+    # Menghitung statistik kelembapan per bulan
+    kelembapan_rata_rata = df_year.groupby('bulan')['kelembapanrata'].mean().reset_index()
+    kelembapan_maks = df_year.groupby('bulan')['kelembapanmaks'].mean().reset_index()
+    kelembapan_min = df_year.groupby('bulan')['kelembapanmin'].mean().reset_index()
+    
+    # Urutkan berdasarkan bulan
+    months = calendar.month_abbr[1:13]
+    for df in [kelembapan_rata_rata, kelembapan_maks, kelembapan_min]:
+        df['bulan'] = pd.Categorical(df['bulan'], categories=months, ordered=True)
+        df.sort_values('bulan', inplace=True)
+
+    # Menggabungkan data untuk dikirim dalam format JSON
+    data = {
+        'labels': kelembapan_rata_rata['bulan'].tolist(),
+        'datasets': [
+            {
+                'label': 'Kelembapan Rata-Rata',
+                'data': kelembapan_rata_rata['kelembapanrata'].round(2).tolist(),
+                'borderColor': 'rgba(75, 192, 192, 1)',
+                'borderWidth': 4,
+                'fill': False
+            },
+            {
+                'label': 'Kelembapan Maksimum',
+                'data': kelembapan_maks['kelembapanmaks'].round(2).tolist(),
+                'borderColor': 'rgba(255, 159, 64, 1)',
+                'borderWidth': 4,
+                'fill': False
+            },
+            {
+                'label': 'Kelembapan Minimum',
+                'data': kelembapan_min['kelembapanmin'].round(2).tolist(),
+                'borderColor': 'rgba(153, 102, 255, 1)',
+                'borderWidth': 4,
+                'fill': False
+            },
+        ]
+    }
+    
+    return data
+
+def prepare_tekanan_data(tahun=None, session=None):
+    # Mengambil data dari database
+    df = session.query(DataFklim).all()
+    df = pd.DataFrame([data.to_dict() for data in df])
+
+    # Memproses input tahun
+    if tahun is None:
+        tahun_range = df['tahun'].unique()
+    elif isinstance(tahun, str):
+        tahun_range = [int(tahun)]
+    elif isinstance(tahun, list) or isinstance(tahun, tuple):
+        tahun_range = list(range(int(tahun[0]), int(tahun[1]) + 1))
+    else:
+        raise ValueError("Input tahun harus berupa string, list, atau tuple")
+
+    # Memilih data sesuai tahun
+    df_year = pd.concat([df[df['tahun'] == t] for t in tahun_range])
+    df_year = df_year[df_year['tekananudara'] != 0]
+    df_year['bulan'] = df_year['bulan'].apply(lambda x: calendar.month_abbr[x])
+
+    # Menghitung statistik tekanan per bulan
+    tekanan_rata_rata = df_year.groupby('bulan')['tekananudara'].mean().reset_index()
+    tekanan_maks = df_year.groupby('bulan')['tekananudara'].max().reset_index()
+    tekanan_min = df_year.groupby('bulan')['tekananudara'].min().reset_index()
+
+    # Urutkan berdasarkan bulan
+    months = calendar.month_abbr[1:13]
+    for df in [tekanan_rata_rata, tekanan_maks, tekanan_min]:
+        df['bulan'] = pd.Categorical(df['bulan'], categories=months, ordered=True)
+        df.sort_values('bulan', inplace=True)
+
+    # Menyiapkan data untuk format JSON
+    data = {
+        'labels': tekanan_rata_rata['bulan'].tolist(),
+        'datasets': [
+            {
+                'label': 'Tekanan Rata-Rata',
+                'data': tekanan_rata_rata['tekananudara'].round(2).tolist(),
+                'borderColor': 'rgba(75, 192, 192, 1)',
+                'borderWidth': 4,
+                'fill': False
+            },
+            {
+                'label': 'Tekanan Maksimum',
+                'data': tekanan_maks['tekananudara'].round(2).tolist(),
+                'borderColor': 'rgba(255, 159, 64, 1)',
+                'borderWidth': 4,
+                'fill': False
+            },
+            {
+                'label': 'Tekanan Minimum',
+                'data': tekanan_min['tekananudara'].round(2).tolist(),
+                'borderColor': 'rgba(153, 102, 255, 1)',
+                'borderWidth': 4,
+                'fill': False
+            },
+        ]
+    }
+
+    return data

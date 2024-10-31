@@ -3,7 +3,51 @@ import pandas as pd
 import plotly.express as px
 from app.models import DataFklim
 
-def visualisasi_windrose_tahun(tahun=None, session=None):
+# def wind_rose(tahun=None, session=None):
+#     # Load data from the database
+#     df = session.query(DataFklim).all()
+#     df = pd.DataFrame([data.to_dict() for data in df])
+
+#     # Convert 'tahun' to an integer range based on input type
+#     if tahun is None:
+#         tahun_range = df['tahun'].unique()
+#     elif isinstance(tahun, str):
+#         tahun_range = [int(tahun)]
+#     elif isinstance(tahun, list) or isinstance(tahun, tuple):
+#         tahun_range = list(range(int(tahun[0]), int(tahun[1]) + 1))
+#     else:
+#         raise ValueError("Input tahun harus berupa string, list, atau tuple")
+
+#     # Filter data by year range and exclude rows with zero wind speed
+#     df_filtered = df[df['tahun'].isin(tahun_range)]
+#     df_filtered = df_filtered[df_filtered['anginkecmaks'] != 0]
+
+#     # Group by month and prepare data for each month
+#     wind_rose_data = {}
+#     for month in range(1, 13):
+#         monthly_data = df_filtered[df_filtered['bulan'] == month]
+#         if monthly_data.empty:
+#             continue
+
+#         # Aggregate by direction and calculate mean speed for each direction
+#         month_avg_data = monthly_data.groupby('anginarah')['anginkecmaks'].mean().reset_index()
+
+#         # Add data to the dictionary for each month
+#         wind_rose_data[calendar.month_abbr[month]] = {
+#             'labels': month_avg_data['anginarah'].tolist(),
+#             'datasets': [{
+#                 'label': f'Kecepatan Angin Rata-rata ({calendar.month_abbr[month]})',
+#                 'data': month_avg_data['anginkecmaks'].tolist(),
+#                 'backgroundColor': [
+#                     'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 
+#                     'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)',
+#                     'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'
+#                 ]
+#             }]
+#         }
+#     return wind_rose_data
+
+def wind_rose(tahun=None, session=None):
     df = session.query(DataFklim).all()
     df = pd.DataFrame([data.to_dict() for data in df])
 
@@ -11,59 +55,42 @@ def visualisasi_windrose_tahun(tahun=None, session=None):
         tahun_range = df['tahun'].unique()
     elif isinstance(tahun, str):
         tahun_range = [int(tahun)]
-    elif isinstance(tahun, int):
-        tahun_range = [tahun]
     elif isinstance(tahun, list) or isinstance(tahun, tuple):
         tahun_range = list(range(int(tahun[0]), int(tahun[1]) + 1))
     else:
-        raise ValueError("Input tahun harus berupa integer, string, list, atau tuple.")
+        raise ValueError("Input tahun harus berupa string, list, atau tuple")
 
     df_filtered = df[df['tahun'].isin(tahun_range)]
-    
-    month_avg_data = df_filtered.groupby('bulan').agg(
-        {'anginarah': lambda x: x.dropna().tolist(),
-         'anginkecrata': lambda x: x[x > 0].mean()}
-    ).reset_index()
+    df_filtered = df_filtered[df_filtered['anginkecmaks'] != 0]
 
-    windrose_figures = []  # List untuk menyimpan visualisasi windrose
-
-    for j in month_avg_data['bulan'].unique():
-        df_windrose = month_avg_data[month_avg_data['bulan'] == j]
-
-        if df_windrose['anginkecrata'].isna().all():
+    wind_rose_data = {}
+    for month in range(1, 13):
+        monthly_data = df_filtered[df_filtered['bulan'] == month]
+        if monthly_data.empty:
             continue
 
-        directions = df_windrose['anginarah'].values[0]
-        speeds = [df_windrose['anginkecrata'].values[0]] * len(directions)
-        
-        windrose_data = pd.DataFrame({
-            'Arah Angin': directions,
-            'Kecepatan Angin': speeds
-        })
-        
-        fig = px.bar_polar(
-            windrose_data,
-            r="Kecepatan Angin",
-            theta="Arah Angin",
-            color="Kecepatan Angin",
-            color_continuous_scale=['red', 'orange', 'yellow', 'lightgreen', 'darkgreen', 'blue'],
-            range_color=[0, 25],
-            labels={'r': 'Kecepatan Angin', 'theta': 'Arah Angin'},
-            title=f'Bulan {calendar.month_name[j]} '
-        )
+        month_avg_data = monthly_data.groupby('anginarah')['anginkecmaks'].mean().reset_index()
 
-        fig.update_traces(marker=dict(line=dict(color='orange', width=1)))
-        fig.update_layout(
-            polar=dict(
-                radialaxis=dict(range=[0, max(speeds) + 5], showticklabels=True),
-                angularaxis=dict(direction="clockwise")
-            )
-        )
+        colors = [
+            'rgba(255, 0, 0, 0.6)' if speed <= 5 else  # Merah
+            'rgba(255, 165, 0, 0.6)' if speed <= 10 else  # Oranye
+            'rgba(255, 255, 0, 0.6)' if speed <= 15 else  # Kuning
+            'rgba(144, 238, 144, 0.6)' if speed <= 20 else  # Hijau Terang
+            'rgba(0, 128, 0, 0.6)' if speed <= 25 else  # Hijau Tua
+            'rgba(0, 0, 255, 0.6)'  # Biru
+            for speed in month_avg_data['anginkecmaks']
+        ]
 
-        # Simpan plotly figure sebagai HTML
-        windrose_figures.append(fig.to_html(full_html=False))
+        wind_rose_data[calendar.month_abbr[month]] = {
+            'datasets': [{
+                'label': f'Kecepatan Angin Rata-rata ({calendar.month_abbr[month]})',
+                'data': month_avg_data['anginkecmaks'].tolist(),
+                'backgroundColor': colors
+            }],
+            'labels': month_avg_data['anginarah'].tolist()
+        }
 
-    return windrose_figures  # Kembalikan list dari HTML visualisasi
+    return wind_rose_data
 
 def chart_kecepatan_angin_tahun(tahun=None, session=None):
     df = session.query(DataFklim).all()
@@ -90,16 +117,16 @@ def chart_kecepatan_angin_tahun(tahun=None, session=None):
     kecepatan_angin_rata_rata = kecepatan_angin_rata_rata.sort_values('bulan')
     
     # Prepare data for Chart.js
-    data1 = {
+    data = {
         'labels': kecepatan_angin_rata_rata['bulan'].tolist(),
         'datasets': [{
             'label': 'Rata-rata Kecepatan Angin Maksimum',
             'data': kecepatan_angin_rata_rata['anginkecmaks'].round(2).tolist(),
             'borderColor': 'rgba(75, 192, 192, 1)',
-            'backgroundColor': 'rgba(75, 192, 192, 0.2)',
-            'borderWidth': 2,
+            'backgroundColor': 'rgba(75, 192, 192, 0.4)',
+            'borderWidth': 4,
             'fill': True,
         }]
     }
     
-    return data1
+    return data

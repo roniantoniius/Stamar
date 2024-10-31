@@ -5,22 +5,26 @@
 <div class="container" style="margin-top: 40px;">
     <div class="card" style="border-radius: 15px; background-color: white; padding: 20px;">
         <div class="row">
-            <!-- <h2>Kecepatan Angin dan Arah Mata Angin</h2>
-            {% for plot in windrose_plots %}
-                <div class="col-md-4">
-                    <div class="card" style="border-radius: 15px; background-color: rgba(217, 233, 255, 0.93); margin-bottom: 20px;">
-                        <div class="card-body">
-                            {{ plot|safe }}
-                        </div>
+            {% for month, data in wind_rose_data.items() %}
+            <div class="col-md-6 mb-4">
+                <h4>{{ month }}</h4>
+                <div class="card" style="border-radius: 15px; background-color: white;">
+                    <div class="card-body">
+                        <canvas id="windRoseChart_{{ month }}" width="400" height="400"></canvas>
                     </div>
                 </div>
-            {% endfor %} -->
+            </div>
+            {% endfor %}
         </div>
         
-        <h2>Rata-rata Kecepatan Angin Maksimum</h2>
-        <div class="card" style="border-radius: 15px; background-color: rgb(204, 225, 255);">
-            <div class="card-body">
-                <canvas id="kecepatanChart"></canvas>
+        <div class="d-flex justify-content-center mb-4">
+            <div class="row">
+                <div class="card" style="border-radius: 15px; background-color: white; width: 1100px; height: 600px;">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center" style="height: 100%;">
+                        <h3 class="text-center mb-4">Rata-rata Kecepatan Angin</h3>
+                        <canvas id="kecepatanAnginChart" width="100" height="50"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -28,41 +32,78 @@
 
 <div class="container" style="margin-top: 40px;">
     <div class="card" style="border-radius: 15px; background-color: white; padding: 20px;">
-        <div class="row">
-            <h2>Suhu, Tekanan Udara, dan Kelembapan Udara</h2>
-        </div>
+        <div class="d-flex justify-content-center mb-4">
+            <div class="row">
+                <div class="card" style="border-radius: 15px; background-color: white; width: 1100px; height: 600px;">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center" style="height: 100%;">
+                        <h3 class="text-center mb-4">Suhu Udara</h3>
+                        <canvas id="suhuChart" width="1000" height="500"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>        
         
-        <h2>Tekanan Udara</h2>
-        <div class="card" style="border-radius: 15px; background-color: rgba(217, 233, 255, 0.93);">
-        </div>
+        
+        <div class="d-flex justify-content-center mb-4" style="padding-top: 30px;">
+            <div class="card mx-2" style="width: 600px; height: 400px; border-radius: 15px; background-color: white;">
+                <div class="card-body">
+                    <h3 class="text-center">Kelembapan Udara</h3>
+                    <canvas id="kelembapanChart" width="500" height="300"></canvas>
+                </div>
+            </div>
+            <div class="card mx-2" style="width: 600px; height: 400px; border-radius: 15px; background-color: white;">
+                <div class="card-body">
+                    <h3 class="text-center">Tekanan Udara</h3>
+                    <canvas id="tekananChart" width="500" height="300"></canvas>
+                </div>
+            </div>
+        </div>        
 
-        <h2>Kelembapan Udara</h2>
-        <div class="card" style="border-radius: 15px; background-color: rgba(217, 233, 255, 0.93);">
-        </div>
+    </div>
+</div>
+
+
+<div class="container" style="margin-top: 40px;">
+    <div class="card" style="border-radius: 15px; background-color: white; padding: 20px;">
+        <div class="d-flex justify-content-center mb-4">
+            <div class="row">
+                <div class="card" style="border-radius: 15px; background-color: white; width: 1100px; height: 600px;">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center" style="height: 100%;">
+                        <h3 class="text-center mb-4">Akumulasi Hujan</h3>
+                        <canvas id="akumulasicurahHujanChart" width="1000" height="500"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>        
+        
+        
+        <div class="d-flex justify-content-center mb-4" style="padding-top: 30px;">
+            <div class="card mx-2" style="width: 600px; height: 400px; border-radius: 15px; background-color: white;">
+                <div class="card-body">
+                    <h3 class="text-center">Curah Hujan Maksimum</h3>
+                    <canvas id="curahHujanMaksChart" width="500" height="300"></canvas>
+                </div>
+            </div>
+            <div class="card mx-2" style="width: 600px; height: 400px; border-radius: 15px; background-color: white;">
+                <div class="card-body">
+                    <h3 class="text-center">Lama Penyinaran Matahari</h3>
+                    <canvas id="sinarMatahariChart" width="500" height="300"></canvas>
+                </div>
+            </div>
+        </div>        
+
     </div>
 </div>
 
 <div class="container" style="margin-top: 40px;">
     <div class="card" style="border-radius: 15px; background-color: white; padding: 20px;">
-        <div class="row">
-            <h2>Akumulasi Hujan, Penyinaran Matahari, dan Curah Hujan Maksimum</h2>
-            <canvas id="suhuChart"></canvas>
-        </div>
-        
-        <h2>Curah Hujan Maksimum</h2>
-        <div class="card" style="border-radius: 15px; background-color: rgba(217, 233, 255, 0.93);">
-        </div>
-
-        <h2>Penyinaran Matahari</h2>
-        <div class="card" style="border-radius: 15px; background-color: rgba(217, 233, 255, 0.93);">
-        </div>
-    </div>
-</div>
-
-<div class="container" style="margin-top: 40px;">
-    <div class="card" style="border-radius: 15px; background-color: white; padding: 20px;">
-        <div class="row">
-            <h2>Persentase Kejadian Cuaca</h2>
+        <div class="d-flex justify-content-center mb-4">
+            <div class="card" style="border-radius: 15px; background-color: white; width: 100%;">
+                <div class="card-body d-flex flex-column align-items-center">
+                    <h3 class="text-center mb-4">Persentase Kejadian Cuaca</h3>
+                    <canvas id="cuaca" style="height: 500px;"></canvas>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -70,8 +111,73 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         // Data dari server
-        const kecepatanData = {{ kecepatan_data|tojson }};
+        const windRoseData = {{ wind_rose_data|tojson }};
+        const kecepatanAnginData = {{ kecepatan_angin_data|tojson }};
         const suhuData = {{ suhu_data|tojson }};
+        const kelembapanData = {{ kelembapan_data|tojson }};
+        const tekananData = {{ tekanan_data|tojson }};
+        const sinarMatahariData = {{ matahari_data|tojson }};
+        const akumulasiHujanData = {{ akumulasi_hujan|tojson }};
+        const hujanMaks = {{ maks_hujan|tojson }};
+        const cuacaData = {{ cuaca_data|tojson }};
+
+        // viz wind rose
+        Object.keys(windRoseData).forEach(function(month) {
+            new Chart(document.getElementById(`windRoseChart_${month}`), {
+                type: 'polarArea',
+                data: {
+                    datasets: windRoseData[month]['datasets'],
+                    labels: windRoseData[month]['labels']
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            min: 0,
+                            max: 30,
+                            stepSize: 5,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + ' m/s';
+                                }
+                            },
+                            angleLines: {
+                                display: true,
+                                color: 'rgba(0, 0, 0, 0.1)',
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)',
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                generateLabels: function(chart) {
+                                    return [
+                                        { text: '0-5 m/s', fillStyle: 'rgba(255, 0, 0, 0.6)' },
+                                        { text: '5-10 m/s', fillStyle: 'rgba(255, 165, 0, 0.6)' },
+                                        { text: '10-15 m/s', fillStyle: 'rgba(255, 255, 0, 0.6)' },
+                                        { text: '15-20 m/s', fillStyle: 'rgba(144, 238, 144, 0.6)' },
+                                        { text: '20-25 m/s', fillStyle: 'rgba(0, 128, 0, 0.6)' },
+                                        { text: '≥25 m/s', fillStyle: 'rgba(0, 0, 255, 0.6)' }
+                                    ];
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Arah: ${context.label}°, Kecepatan: ${context.raw.toFixed(2)} m/s`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
         
         // Chart Kecepatan Angin
         new Chart(document.getElementById('kecepatanAnginChart'), {
@@ -81,14 +187,22 @@
                 responsive: true,
                 plugins: {
                     legend: {
-                        position: 'top',
+                        position: 'bottom',
                     },
                     title: {
                         display: true,
-                        text: 'Rata-rata Kecepatan Angin Maksimum'
+                    },
+                    datalabels: {
+                        display: true,
+                        color: 'black',
+                        align: 'top',
+                        formatter: function(value, context){
+                            return value.toFixed(2);
+                        }
                     }
                 }
-            }
+            },
+            plugins: [ChartDataLabels]
         });
 
         // Chart Suhu Udara
@@ -99,14 +213,192 @@
                 responsive: true,
                 plugins: {
                     legend: {
-                        position: 'top',
+                        position: 'bottom',
                     },
                     title: {
                         display: true,
-                        text: 'Data Suhu Udara'
+                    },
+                    datalabels: {
+                        display: true,
+                        color: 'black',
+                        align: 'top',
+                        font: {
+                            size: 9
+                        },
+                        formatter: function(value, context){
+                            return value.toFixed(2);
+                        }
                     }
                 }
-            }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+        // Chart Kelembapan Udara
+        new Chart(document.getElementById('kelembapanChart'), {
+            type: 'line',
+            data: kelembapanData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: true,
+                    },
+                    datalabels: {
+                        display: true,
+                        color: 'black',
+                        align: 'top',
+                        font: {
+                            size: 10
+                        },
+                        formatter: function(value, context){
+                            return value.toFixed(2);
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+        // Chart Tekanan Udara
+        new Chart(document.getElementById('tekananChart'), {
+            type: 'line',
+            data: tekananData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: true,
+                    },
+                    datalabels: {
+                        display: true,
+                        color: 'black',
+                        align: 'top',
+                        font: {
+                            size: 10
+                        },
+                        formatter: function(value, context){
+                            return value.toFixed(2);
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+        new Chart(document.getElementById('sinarMatahariChart'), {
+            type: 'bar',
+            data: sinarMatahariData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: true,
+                    },
+                    datalabels: {
+                        display: true,
+                        color: 'black',
+                        align: 'top',
+                        anchor: 'end',
+                        formatter: function(value, context){
+                            return value.toFixed(2);
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+        // Chart Akumulasi Curah Hujan
+        new Chart(document.getElementById('akumulasicurahHujanChart'), {
+            type: 'bar',
+            data: akumulasiHujanData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: true,
+                    },
+                    datalabels: {
+                        display: true,
+                        color: 'black',
+                        align: 'top',
+                        anchor: 'end',
+                        formatter: function(value, context){
+                            return value.toFixed(2);
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+        new Chart(document.getElementById('curahHujanMaksChart'), {
+            type: 'bar',
+            data: hujanMaks,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: true,
+                    },
+                    datalabels: {
+                        display: true,
+                        color: 'black',
+                        anchor: 'end',
+                        align: 'top',
+                        formatter: function(value, context){
+                            return value.toFixed(2);
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+        // Pie Chart Persentase Cuaca
+        new Chart(document.getElementById('cuaca'), {
+            type: 'pie',
+            data: cuacaData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: true,
+                    },
+                    datalabels: {
+                        display: true,
+                        color: 'white',
+                        align: 'top',
+                        font: {
+                            weight: 'bold',
+                            size: 20
+                        },
+                        formatter: function(value, context){
+                            return value.toFixed(2) + '%';
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
         });
     });
 </script>

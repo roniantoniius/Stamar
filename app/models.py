@@ -95,6 +95,7 @@ class DataFklim(db.Model):
             'suhurata': self.suhurata,
             'suhumaks': self.suhumaks,
             'suhumin': self.suhumin,
+            'sinarmatahari': self.sinarmatahari,
             'curahhujan': self.curahhujan,
             'cuaca': self.cuaca,
             'tekananudara': self.tekananudara,

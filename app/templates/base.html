@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
   </head>
   <body>
@@ -19,8 +20,10 @@
       <div class="background"></div>
       <nav class="navbar navbar-expand-lg">
         <div class="container">
-          <img src="{{ url_for('static', filename='images/logo.png') }}" style="width: 60px; padding-right: 20px;" alt="">
-          <h3 style="padding-top: 7px;" class="mainColor text-decoration-none" href="/">Dashboard FKlim Stasiun Meteorologi Maritim Tanjung Priok</h3>
+          <a href="/" style="display: flex; align-items: center; text-decoration: none;">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" style="width: 60px; padding-right: 20px;" alt="">
+            <h3 style="padding-top: 7px;" class="mainColor text-decoration-none">Dashboard FKlim Stasiun Meteorologi Maritim Tanjung Priok</h3>
+          </a>        
           <button
             class="navbar-toggler"
             type="button"
