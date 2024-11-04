@@ -13,7 +13,12 @@ def prepare_suhu_data(tahun=None, session=None):
     elif isinstance(tahun, str):
         tahun_range = [int(tahun)]
     elif isinstance(tahun, list) or isinstance(tahun, tuple):
-        tahun_range = list(range(int(tahun[0]), int(tahun[1]) + 1))
+        if len(tahun) == 1:
+            tahun_range = list(tahun)
+        elif len(tahun) == 2:
+            tahun_range = list(range(int(tahun[0]), int(tahun[1]) + 1))
+        else:
+            raise ValueError("Input tahun harus berupa satu tahun atau dua tahun")
     else:
         raise ValueError("Input tahun harus berupa string, list, atau tuple")
 
@@ -90,7 +95,12 @@ def prepare_kelembapan_data(tahun=None, session=None):
     elif isinstance(tahun, str):
         tahun_range = [int(tahun)]
     elif isinstance(tahun, list) or isinstance(tahun, tuple):
-        tahun_range = list(range(int(tahun[0]), int(tahun[1]) + 1))
+        if len(tahun) == 1:
+            tahun_range = list(tahun)
+        elif len(tahun) == 2:
+            tahun_range = list(range(int(tahun[0]), int(tahun[1]) + 1))
+        else:
+            raise ValueError("Input tahun harus berupa satu tahun atau dua tahun")
     else:
         raise ValueError("Input tahun harus berupa string, list, atau tuple")
 
@@ -151,7 +161,12 @@ def prepare_tekanan_data(tahun=None, session=None):
     elif isinstance(tahun, str):
         tahun_range = [int(tahun)]
     elif isinstance(tahun, list) or isinstance(tahun, tuple):
-        tahun_range = list(range(int(tahun[0]), int(tahun[1]) + 1))
+        if len(tahun) == 1:
+            tahun_range = list(tahun)
+        elif len(tahun) == 2:
+            tahun_range = list(range(int(tahun[0]), int(tahun[1]) + 1))
+        else:
+            raise ValueError("Input tahun harus berupa satu tahun atau dua tahun")
     else:
         raise ValueError("Input tahun harus berupa string, list, atau tuple")
 

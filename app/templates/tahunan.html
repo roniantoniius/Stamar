@@ -2,6 +2,53 @@
 {% block title %}Tahunan{% endblock %}
 {% block content %}
 
+<div class="container" style="margin-top: 40px; margin-bottom: 20px;">
+    <h1 class="text-center">{{ title }}</h1>
+</div>
+<div class="container" style="margin-top: 40px;">
+    <div class="card" style="border-radius: 15px; background-color: white; padding: 20px;">
+        <h3 class="text-center" style="padding-bottom: 20px;">Kaleidoskop Data Iklim</h3>
+        
+        <!-- Baris pertama: Curah Hujan dan Tekanan Udara -->
+        <div class="row mb-4">
+            {% for kpi in kpi_data %}
+                {% if 'Curah Hujan' in kpi.parameter or 'Tekanan Udara' in kpi.parameter %}
+                    <div class="col-md-6 mb-4">
+                        <div class="card" style="border-radius: 15px; background-color: {% if 'Tertinggi' in kpi.parameter %}rgba(195, 252, 255, 0.6){% else %}rgba(195, 252, 255, 0.2){% endif %};">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ kpi.parameter }}</h5>
+                                <hr>
+                                <h2 class="font-weight-bold">{{ add_unit(kpi.parameter, kpi.nilai) }}</h2>
+                                <p class="card-text">{{ kpi.tanggal }}</p>
+                                <p class="card-text">{{ kpi.cuaca }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Baris-baris berikutnya: Parameter lainnya -->
+        <div class="row">
+            {% for kpi in kpi_data %}
+                {% if not ('Curah Hujan' in kpi.parameter or 'Tekanan Udara' in kpi.parameter) %}
+                    <div class="col-md-3 mb-4">
+                        <div class="card" style="border-radius: 15px; background-color: {% if 'Tertinggi' in kpi.parameter %}rgba(195, 252, 255, 0.8){% else %}rgba(195, 252, 255, 0.2){% endif %};">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ kpi.parameter }}</h5>
+                                <hr>
+                                <h2 class="font-weight-bold">{{ add_unit(kpi.parameter, kpi.nilai) }}</h2>
+                                <p class="card-text">{{ kpi.tanggal }}</p>
+                                <p class="card-text">{{ kpi.cuaca }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
 <div class="container" style="margin-top: 40px;">
     <div class="card" style="border-radius: 15px; background-color: white; padding: 20px;">
         <div class="row">
@@ -127,23 +174,7 @@
         Object.keys(windRoseData).forEach(function(month) {
             const ctx = document.getElementById(`windRoseChart_${month}`).getContext('2d');
             const data = windRoseData[month]['datasets'][0]['data'];
-            const originalLabels = windRoseData[month]['labels'];
-
-            // Definisikan 8 arah angin untuk octagon
-            const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
-
-            // Fungsi untuk mengkonversi label asli ke 8 arah
-            function convertToOctagonDirection(label) {
-                const angle = parseInt(label);
-                const index = Math.round(angle / 45) % 8;
-                return directions[index];
-            }
-
-            // Konversi data ke 8 arah
-            const octagonData = directions.map(dir => {
-                const matchingData = data.filter((_, i) => convertToOctagonDirection(originalLabels[i]) === dir);
-                return matchingData.length > 0 ? Math.max(...matchingData) : 0;
-            });
+            const labels = windRoseData[month]['labels'];
 
             // Definisikan rentang kecepatan angin dan warna yang sesuai
             const ranges = [
@@ -159,26 +190,25 @@
             const datasets = ranges.map((range, index) => {
                 return {
                     label: `${index === 0 ? '0' : ranges[index-1].max} - ${range.max} km/h`,
-                    data: octagonData.map(value => Math.min(value, range.max)),
+                    data: data.map(value => value > range.max ? range.max : (value < (index === 0 ? 0 : ranges[index-1].max) ? null : value)),
                     backgroundColor: range.color + '0.6)',
                     borderColor: range.color + '1)',
-                    pointBackgroundColor: 'transparent',
-                    pointBorderColor: 'transparent',
-                    borderWidth: 1
+                    borderWidth: 1,
+                    fill: true
                 };
             });
 
             new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: directions,
+                    labels: labels,
                     datasets: datasets
                 },
                 options: {
                     responsive: true,
                     scales: {
                         r: {
-                            angleLines: { display: true },
+                            angleLines: { display: false },
                             suggestedMin: 0,
                             suggestedMax: 25,
                             ticks: {
@@ -188,17 +218,27 @@
                                 }
                             },
                             pointLabels: {
-                                font: {
-                                    size: 14,
-                                    weight: 'bold'
+                                callback: function(label, index) {
+                                    if (index % 45 === 0) {
+                                        const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+                                        return directions[index / 45];
+                                    }
+                                    return '';
                                 }
                             }
                         }
                     },
                     plugins: {
-                        legend: { position: 'top' }
+                        legend: { position: 'top' },
+                        filler: {
+                            propagate: false
+                        }
                     },
-                    startAngle: 22.5 // Rotasi chart untuk memulai dari utara
+                    elements: {
+                        line: {
+                            tension: 0 // membuat garis lurus
+                        }
+                    }
                 }
             });
         });
