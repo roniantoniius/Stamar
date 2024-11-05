@@ -42,8 +42,8 @@ def prepare_sinar_matahari_data(tahun=None, session=None):
             {
                 'label': 'Rata-rata Penyinaran Matahari',
                 'data': sinar_matahari_rata_rata['sinarmatahari'].round(2).tolist(),
-                'backgroundColor': 'rgba(75, 192, 192, 0.6)',
-                'borderColor': 'rgba(75, 192, 192, 1)',
+                'backgroundColor': 'rgba(255, 193, 7, 0.6)',
+                'borderColor': 'rgba(255, 140, 0, 1)',
                 'borderWidth': 3
             }
         ]
