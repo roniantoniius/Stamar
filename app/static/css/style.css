@@ -188,7 +188,7 @@ main .form-control:focus {
 .boxContainer {
   max-width: 600px;
   margin: auto;
-  background-color: rgb(157, 219, 255);
+  background-color: #5dadec;
   box-shadow: -6px 10px 15px -5px rgba(167, 208, 255, 0.45);
   border: #004da413 1px solid;
 }
@@ -199,7 +199,7 @@ main .form-control:focus {
 }
 
 #homeBox:hover {
-  background-color: rgba(117, 189, 253, 0.853);
+  background-color: rgba(175, 251, 255, 0.7);
   box-shadow: -6px 15px 20px -5px rgba(167, 208, 255, 0.75);
   transform: translateY(-5px);
 }

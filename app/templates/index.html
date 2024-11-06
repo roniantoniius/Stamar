@@ -16,7 +16,7 @@
                     <h1 class="my-5">Tahunan</h1>
                 </div>
             </a>
-            <a href="/bulanan" style="text-decoration: none;">
+            <a href="#" id="bulananLink" style="text-decoration: none;">
                 <div id="homeBox" class="boxContainer text-center p-3 p-md-5 rounded-3">
                     <h1 class="my-5">Bulanan</h1>
                 </div>
@@ -66,6 +66,75 @@
                     if (tahunAkhir) {
                         url += '&tahun_akhir=' + tahunAkhir;
                     }
+                    Swal.fire({
+                        title: 'Loading...',
+                        text: 'Mengambil data, mohon tunggu...',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    setTimeout(() => {
+                        window.location.href = url;
+                    }, 1000);
+                }
+            });
+        });
+        
+        $('#bulananLink').on('click', function(e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Masukkan Tahun dan Bulan',
+                html:
+                    '<p>Silahkan masukkan tahun awal, tahun akhir (opsional), bulan awal, dan bulan akhir (opsional) untuk melihat data bulanan.</p>' +
+                    '<input id="swal-input1" class="swal2-input" placeholder="Tahun Awal">' +
+                    '<input id="swal-input2" class="swal2-input" placeholder="Tahun Akhir (opsional)">' +
+                    '<input id="swal-input3" class="swal2-input" placeholder="Bulan Awal (1-12)">' +
+                    '<input id="swal-input4" class="swal2-input" placeholder="Bulan Akhir (opsional, 1-12)">',
+                focusConfirm: false,
+                showCancelButton: true,
+                confirmButtonText: 'Ok',
+                cancelButtonText: 'Batal',
+                preConfirm: () => {
+                    const tahunAwal = document.getElementById('swal-input1').value;
+                    const tahunAkhir = document.getElementById('swal-input2').value;
+                    const bulanAwal = document.getElementById('swal-input3').value;
+                    const bulanAkhir = document.getElementById('swal-input4').value;
+
+                    if (!tahunAwal || !bulanAwal) {
+                        Swal.showValidationMessage('Tahun Awal dan Bulan Awal harus diisi');
+                        return false;
+                    }
+
+                    if (!/^\d+$/.test(tahunAwal) || (tahunAkhir && !/^\d+$/.test(tahunAkhir))) {
+                        Swal.showValidationMessage('Tahun harus berupa angka');
+                        return false;
+                    }
+
+                    if (!/^\d+$/.test(bulanAwal) || (bulanAkhir && !/^\d+$/.test(bulanAkhir))) {
+                        Swal.showValidationMessage('Bulan harus berupa angka');
+                        return false;
+                    }
+
+                    if (bulanAwal < 1 || bulanAwal > 12 || (bulanAkhir && (bulanAkhir < 1 || bulanAkhir > 12))) {
+                        Swal.showValidationMessage('Bulan harus di antara 1 dan 12');
+                        return false;
+                    }
+
+                    return [tahunAwal, tahunAkhir, bulanAwal, bulanAkhir];
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const [tahunAwal, tahunAkhir, bulanAwal, bulanAkhir] = result.value;
+                    let url = '/bulanan?tahun_awal=' + tahunAwal + '&bulan_awal=' + bulanAwal;
+                    if (tahunAkhir) {
+                        url += '&tahun_akhir=' + tahunAkhir;
+                    }
+                    if (bulanAkhir) {
+                        url += '&bulan_akhir=' + bulanAkhir;
+                    }
+
                     // Show loading screen before redirection
                     Swal.fire({
                         title: 'Loading...',

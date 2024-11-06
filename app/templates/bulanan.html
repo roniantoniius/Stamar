@@ -13,8 +13,44 @@
                 <h3 id="containerTitleBulan1" class="mb-0">Kaleidoskop Data Iklim</h3>
             </div>
         </div>
-        
 
+        <!-- Baris pertama: Curah Hujan dan Tekanan Udara -->
+        <div class="row mb-4">
+            {% for kpi in kpi_bulan %}
+                {% if 'Curah Hujan' in kpi.parameter or 'Tekanan Udara' in kpi.parameter %}
+                    <div class="col-md-6 mb-4">
+                        <div class="card" style="border-radius: 15px; background-color: {% if 'Tertinggi' in kpi.parameter %}rgba(195, 252, 255, 0.6){% else %}rgba(195, 252, 255, 0.2){% endif %};">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ kpi.parameter }}</h5>
+                                <hr>
+                                <h2 class="font-weight-bold">{{ add_unit(kpi.parameter, kpi.nilai) }}</h2>
+                                <p class="card-text">{{ kpi.tanggal }}</p>
+                                <p class="card-text">{{ kpi.cuaca }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Baris-baris berikutnya: Parameter lainnya -->
+        <div class="row">
+            {% for kpi in kpi_bulan %}
+                {% if not ('Curah Hujan' in kpi.parameter or 'Tekanan Udara' in kpi.parameter) %}
+                    <div class="col-md-3 mb-4">
+                        <div class="card" style="border-radius: 15px; background-color: {% if 'Tertinggi' in kpi.parameter %}rgba(195, 252, 255, 0.8){% else %}rgba(195, 252, 255, 0.2){% endif %};">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ kpi.parameter }}</h5>
+                                <hr>
+                                <h2 class="font-weight-bold">{{ add_unit(kpi.parameter, kpi.nilai) }}</h2>
+                                <p class="card-text">{{ kpi.tanggal }}</p>
+                                <p class="card-text">{{ kpi.cuaca }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
 
         <div class="text-center mt-4">
             <button class="btn btn-download" onclick="downloadPDF('contentToDownloadBulan1', 'containerTitleBulan1')">Download Bagian Ini</button>
@@ -25,13 +61,24 @@
 <div class="container" id="contentToDownloadBulan2" style="margin-top: 40px;">
     <div class="card" style="border-radius: 15px; background-color: white; padding: 20px;">
         <h3 id="containerTitleBulan2" class="text-center" style="padding-bottom: 20px;">Data Arah Angin dan Kecepatan Maksimum</h3>
-        
+        <div class="row">
+            {% for month, data in wind_rose_bulan.items() %}
+            <div class="col-md-6 mb-4">
+                <h4>{{ month }}</h4>
+                <div class="card" style="border-radius: 15px; background-color: white;">
+                    <div class="card-body">
+                        <canvas id="windRoseBulan_{{ month }}" width="400" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
         <div class="d-flex justify-content-center mb-4">
             <div class="row">
                 <div class="card" style="border-radius: 15px; background-color: white; width: 1100px; height: 600px;">
                     <div class="card-body d-flex flex-column align-items-center justify-content-center" style="height: 100%;">
                         <h3 class="text-center mb-4">Rata-rata Kecepatan Angin</h3>
-                        <canvas id="kecepatanAnginChart" width="100" height="50"></canvas>
+                        <canvas id="kecepatanAnginBulan" width="100" height="50"></canvas>
                     </div>
                 </div>
             </div>
@@ -45,9 +92,32 @@
 <div class="container" id="contentToDownloadBulan3" style="margin-top: 40px;">
     <div class="card" style="border-radius: 15px; background-color: white; padding: 20px;">
         <h3 class="text-center" style="padding-bottom: 20px;" id="containerTitleBulan3">Data Suhu, Kelembapan, dan Tekanan Udara</h3>
+        <div class="d-flex justify-content-center mb-4">
+            <div class="row">
+                <div class="card" style="border-radius: 15px; background-color: white; width: 1100px; height: 600px;">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center" style="height: 100%;">
+                        <h3 class="text-center mb-4">Suhu Udara</h3>
+                        <canvas id="suhuBulan" width="1000" height="500"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <div class="d-flex justify-content-center mb-4" style="padding-top: 30px;">
+            <div class="card mx-2" style="width: 600px; height: 400px; border-radius: 15px; background-color: white;">
+                <div class="card-body">
+                    <h3 class="text-center">Kelembapan Udara</h3>
+                    <canvas id="kelembapanBulan" width="500" height="300"></canvas>
+                </div>
+            </div>
+            <div class="card mx-2" style="width: 600px; height: 400px; border-radius: 15px; background-color: white;">
+                <div class="card-body">
+                    <h3 class="text-center">Tekanan Udara</h3>
+                    <canvas id="tekananBulan" width="500" height="300"></canvas>
+                </div>
+            </div>
+        </div>
 
-        
         <div class="text-center mt-4">
             <button class="btn btn-download" onclick="downloadPDF('contentToDownloadBulan3', 'containerTitleBulan3')">Download Bagian Ini</button>
         </div>
@@ -60,7 +130,30 @@
     <div class="card" style="border-radius: 15px; background-color: white; padding: 20px;">
         <h3 class="text-center" style="padding-bottom: 20px;" id="containerTitleBulan4">Data Curah Hujan dan Lama Penyinaran Matahari</h3>
 
-        
+        <div class="d-flex justify-content-center mb-4">
+            <div class="row">
+                <div class="card" style="border-radius: 15px; background-color: white; width: 1100px; height: 600px;">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center" style="height: 100%;">
+                        <h3 class="text-center mb-4">Akumulasi Hujan</h3>
+                        <canvas id="akumulasicurahHujanBulan" width="1000" height="500"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center mb-4" style="padding-top: 30px;">
+            <div class="card mx-2" style="width: 600px; height: 400px; border-radius: 15px; background-color: white;">
+                <div class="card-body">
+                    <h3 class="text-center">Curah Hujan Maksimum</h3>
+                    <canvas id="curahHujanMaksBulan" width="500" height="300"></canvas>
+                </div>
+            </div>
+            <div class="card mx-2" style="width: 600px; height: 400px; border-radius: 15px; background-color: white;">
+                <div class="card-body">
+                    <h3 class="text-center">Lama Penyinaran Matahari</h3>
+                    <canvas id="sinarMatahariBulan" width="500" height="300"></canvas>
+                </div>
+            </div>
+        </div>
 
         <div class="text-center mt-4">
             <button class="btn btn-download" onclick="downloadPDF('contentToDownloadBulan4', 'containerTitleBulan4')">Download Bagian Ini</button>
@@ -74,7 +167,9 @@
             <div class="card" style="border-radius: 15px; background-color: white; width: 100%;">
                 <div class="card-body d-flex flex-column align-items-center">
                     <h3 class="text-center mb-4" id="containerTitleBulan5">Persentase Kejadian Cuaca</h3>
-
+                    <div style="width: 700px; height: 700px;">
+                        <canvas id="cuacaBulan"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -83,7 +178,299 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const windRoseDataBulan = {{ wind_rose_bulan|tojson }};
+        const kecepatanDataBulan = {{ kecepatan_bulan|tojson }};
+        const suhuDataBulan = {{ suhu_bulan|tojson }};
+        const kelembapanDataBulan = {{ kelembapan_bulan|tojson }};
+        const tekananDataBulan = {{ tekanan_bulan|tojson }};
+        const akumulasiHujanDataBulan = {{ hujan_akumulasi_bulan|tojson }};
+        const sinarMatahariDataBulan = {{ matahari_bulan|tojson }};
+        const hujanMaksDataBulan = {{ hujan_maksimum_bulan|tojson }};
+        const cuacaDataBulan = {{ cuaca_bulan|tojson }};
 
+        Object.keys(windRoseDataBulan).forEach(function(month) {
+            const ctx = document.getElementById(`windRoseBulan_${month}`).getContext('2d');
+            const data = windRoseDataBulan[month]['datasets'][0]['data'];
+            const labels = windRoseDataBulan[month]['labels'];
+
+            const ranges = [
+                { max: 5, color: 'rgba(255, 0, 0, ' },
+                { max: 10, color: 'rgba(255, 165, 0, ' },
+                { max: 15, color: 'rgba(255, 255, 0, ' },
+                { max: 20, color: 'rgba(144, 238, 144, ' },
+                { max: 25, color: 'rgba(0, 128, 0, ' },
+                { max: Infinity, color: '#12ffd3' }
+            ];
+
+            const datasets = ranges.map((range, index) => ({
+                label: `${index === 0 ? '0' : ranges[index-1].max} - ${range.max} km/h`,
+                data: data.map(value => value > range.max ? range.max : (value < (index === 0 ? 0 : ranges[index-1].max) ? null : value)),
+                backgroundColor: range.color + '0.6)',
+                borderColor: range.color + '1)',
+                borderWidth: 1,
+                fill: true
+            }));
+
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: labels,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        r: {
+                            angleLines: { display: false },
+                            suggestedMin: 0,
+                            suggestedMax: 25,
+                            ticks: {
+                                stepSize: 5,
+                                callback: function(value) { return value + ' km/h'; }
+                            },
+                            pointLabels: {
+                                callback: function(label, index) {
+                                    const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+                                    return directions[index / 45] || '';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'top' },
+                        filler: { propagate: false }
+                    },
+                    elements: { line: { tension: 0 } }
+                }
+            });
+        });
+
+        // Chart Kecepatan Angin
+        new Chart(document.getElementById('kecepatanAnginBulan'), {
+            type: 'line',
+            data: kecepatanDataBulan,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: true,
+                    },
+                    datalabels: {
+                        display: true,
+                        color: 'black',
+                        align: 'top',
+                        formatter: function(value, context){
+                            return value.toFixed(2);
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+        // Chart Suhu Udara
+        new Chart(document.getElementById('suhuBulan'), {
+            type: 'line',
+            data: suhuDataBulan,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: true,
+                    },
+                    datalabels: {
+                        display: true,
+                        color: 'black',
+                        align: 'top',
+                        font: {
+                            size: 9
+                        },
+                        formatter: function(value, context){
+                            return value.toFixed(2);
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+        // Chart Kelembapan Udara
+        new Chart(document.getElementById('kelembapanBulan'), {
+            type: 'line',
+            data: kelembapanDataBulan,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: true,
+                    },
+                    datalabels: {
+                        display: true,
+                        color: 'black',
+                        align: 'top',
+                        font: {
+                            size: 10
+                        },
+                        formatter: function(value, context){
+                            return value.toFixed(2);
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+        // Chart Tekanan Udara
+        new Chart(document.getElementById('tekananBulan'), {
+            type: 'line',
+            data: tekananDataBulan,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: true,
+                    },
+                    datalabels: {
+                        display: true,
+                        color: 'black',
+                        align: 'top',
+                        font: {
+                            size: 10
+                        },
+                        formatter: function(value, context){
+                            return value.toFixed(2);
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+        new Chart(document.getElementById('sinarMatahariBulan'), {
+            type: 'bar',
+            data: sinarMatahariDataBulan,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: true,
+                    },
+                    datalabels: {
+                        display: true,
+                        color: 'black',
+                        align: 'top',
+                        anchor: 'end',
+                        formatter: function(value, context){
+                            return value.toFixed(2) + '%';
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+        // Chart Akumulasi Curah Hujan
+        new Chart(document.getElementById('akumulasicurahHujanBulan'), {
+            type: 'bar',
+            data: akumulasiHujanDataBulan,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: true,
+                    },
+                    datalabels: {
+                        display: true,
+                        color: 'black',
+                        align: 'top',
+                        anchor: 'end',
+                        formatter: function(value, context){
+                            return value.toFixed(2);
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+        new Chart(document.getElementById('curahHujanMaksBulan'), {
+            type: 'bar',
+            data: hujanMaksDataBulan,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: true,
+                    },
+                    datalabels: {
+                        display: true,
+                        color: 'black',
+                        anchor: 'end',
+                        align: 'top',
+                        formatter: function(value, context){
+                            return value.toFixed(2);
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+        // Pie Chart Persentase Cuaca
+        new Chart(document.getElementById('cuacaBulan'), {
+            type: 'doughnut',
+            data: cuacaDataBulan,
+            options: {
+                responsive: true,
+                cutout: '50%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: true,
+                    },
+                    datalabels: {
+                        display: true,
+                        color: 'white',
+                        align: 'top',
+                        font: {
+                            weight: 'bold',
+                            size: 20
+                        },
+                        formatter: function(value, context){
+                            return value.toFixed(2) + '%';
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+    });
+</script>
 <script>
     Swal.fire({
         title: 'Loading...',
