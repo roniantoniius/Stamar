@@ -29,11 +29,17 @@
         $('#tahunanLink').on('click', function(e) {
             e.preventDefault();
             Swal.fire({
-                title: 'Masukkan Tahun',
+                title: 'Dashboard Iklim Tahunan',
                 html:
-                    '<p>Silahkan masukkan tahun awal dan tahun akhir (opsional) untuk melihat data tahunan.</p>' +
-                    '<input id="swal-input1" class="swal2-input" placeholder="Tahun Awal">' +
-                    '<input id="swal-input2" class="swal2-input" placeholder="Tahun Akhir (opsional)">',
+                    '<p>Silahkan masukkan tahun awal dan tahun akhir (opsional) untuk melihat iklim tahunan.</p>' +
+                    '<div style="margin-bottom: 10px;">' +
+                        '<strong>Tahun Awal</strong>' +
+                        '<input id="swal-input1" class="swal2-input" style="margin-top: 5px;" placeholder="Masukkan tahun">' +
+                    '</div>' +
+                    '<div>' +
+                        '<strong>Tahun Akhir (opsional)</strong>' +
+                        '<input id="swal-input2" class="swal2-input" style="margin-top: 5px;" placeholder="Masukkan rentang tahun akhir">' +
+                    '</div>',
                 focusConfirm: false,
                 showCancelButton: true,
                 confirmButtonText: 'Ok',
@@ -67,8 +73,8 @@
                         url += '&tahun_akhir=' + tahunAkhir;
                     }
                     Swal.fire({
-                        title: 'Loading...',
-                        text: 'Mengambil data, mohon tunggu...',
+                        title: 'Sedang Memproses Data Tahunan...',
+                        text: 'Kami sedang mengambil data yang Anda butuhkan. Mohon bersabar, ya! 🧑‍🍳',
                         allowOutsideClick: false,
                         didOpen: () => {
                             Swal.showLoading();
@@ -85,13 +91,25 @@
         $('#bulananLink').on('click', function(e) {
             e.preventDefault();
             Swal.fire({
-                title: 'Masukkan Tahun dan Bulan',
+                title: 'Dashboard Iklim Bulanan',
                 html:
-                    '<p>Silahkan masukkan tahun awal, tahun akhir (opsional), bulan awal, dan bulan akhir (opsional) untuk melihat data bulanan.</p>' +
-                    '<input id="swal-input1" class="swal2-input" placeholder="Tahun Awal">' +
-                    '<input id="swal-input2" class="swal2-input" placeholder="Tahun Akhir (opsional)">' +
-                    '<input id="swal-input3" class="swal2-input" placeholder="Bulan Awal (1-12)">' +
-                    '<input id="swal-input4" class="swal2-input" placeholder="Bulan Akhir (opsional, 1-12)">',
+                    '<p>Silahkan masukkan tahun awal, tahun akhir (opsional), bulan awal, dan bulan akhir (opsional) untuk melihat iklim bulanan.</p>' +
+                    '<div style="margin-bottom: 10px;">' +
+                        '<strong>Tahun Awal</strong>' +
+                        '<input id="swal-input1" class="swal2-input" style="margin-top: 5px;" placeholder="Masukkan Tahun Awal">' +
+                    '</div>' +
+                    '<div style="margin-bottom: 10px;">' +
+                        '<strong>Tahun Akhir (opsional)</strong>' +
+                        '<input id="swal-input2" class="swal2-input" style="margin-top: 5px;" placeholder="Masukkan Tahun Akhir">' +
+                    '</div>' +
+                    '<div style="margin-bottom: 10px;">' +
+                        '<strong>Bulan Awal (1-12)</strong>' +
+                        '<input id="swal-input3" class="swal2-input" style="margin-top: 5px;" placeholder="Masukkan Bulan Awal">' +
+                    '</div>' +
+                    '<div>' +
+                        '<strong>Bulan Akhir (opsional, 1-12)</strong>' +
+                        '<input id="swal-input4" class="swal2-input" style="margin-top: 5px;" placeholder="Masukkan Bulan Akhir">' +
+                    '</div>',
                 focusConfirm: false,
                 showCancelButton: true,
                 confirmButtonText: 'Ok',
@@ -135,18 +153,16 @@
                         url += '&bulan_akhir=' + bulanAkhir;
                     }
 
-                    // Show loading screen before redirection
                     Swal.fire({
-                        title: 'Loading...',
-                        text: 'Mengambil data, mohon tunggu...',
+                        title: 'Sedang Memproses...',
+                        text: 'Kami sedang mengambil data bulanan yang Anda pilih. Mohon tunggu sebentar! 🤖',
                         allowOutsideClick: false,
                         didOpen: () => {
                             Swal.showLoading();
                         }
                     });
 
-                    // Redirect after a short delay to show the loading screen
-                    setTimeout(() => {
+                        setTimeout(() => {
                         window.location.href = url;
                     }, 1000);
                 }

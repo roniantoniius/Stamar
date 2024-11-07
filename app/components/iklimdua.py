@@ -26,19 +26,12 @@ def prepare_sinar_matahari_data(tahun=None, session=None):
     # Memilih data sesuai tahun yang dipilih
     df_year = pd.concat([df[df['tahun'] == t] for t in tahun_range])
     df_year = df_year[df_year['sinarmatahari'] != 0]  # Pastikan nama kolom sesuai dengan database
-    df_year['bulan'] = df_year['bulan'].apply(lambda x: calendar.month_abbr[x])
     
     # Menghitung rata-rata sinar matahari per bulan
-    sinar_matahari_rata_rata = df_year.groupby('bulan')['sinarmatahari'].mean().reset_index()
+    sinar_matahari_rata_rata = df_year.groupby('tahun')['sinarmatahari'].mean().reset_index()
     
-    # Urutkan berdasarkan bulan
-    months = calendar.month_abbr[1:13]
-    sinar_matahari_rata_rata['bulan'] = pd.Categorical(sinar_matahari_rata_rata['bulan'], categories=months, ordered=True)
-    sinar_matahari_rata_rata.sort_values('bulan', inplace=True)
-
-    # Menggabungkan data untuk dikirim dalam format JSON
     data = {
-        'labels': sinar_matahari_rata_rata['bulan'].tolist(),
+        'labels': sinar_matahari_rata_rata['tahun'].astype(str).tolist(),
         'datasets': [
             {
                 'label': 'Rata-rata Penyinaran Matahari',
@@ -75,19 +68,13 @@ def akumulasi_curah_hujan(tahun=None, session=None):
     # Memilih data sesuai tahun yang dipilih
     df_year = pd.concat([df[df['tahun'] == t] for t in tahun_range])
     df_year = df_year[df_year['curahhujan'] != 0]  # Pastikan nama kolom sesuai dengan database
-    df_year['bulan'] = df_year['bulan'].apply(lambda x: calendar.month_abbr[x])
     
     # Menghitung akumulasi curah hujan per bulan
-    curah_hujan_rata_rata = df_year.groupby('bulan')['curahhujan'].sum().reset_index()
+    curah_hujan_rata_rata = df_year.groupby('tahun')['curahhujan'].sum().reset_index()
     
-    # Urutkan berdasarkan bulan
-    months = calendar.month_abbr[1:13]
-    curah_hujan_rata_rata['bulan'] = pd.Categorical(curah_hujan_rata_rata['bulan'], categories=months, ordered=True)
-    curah_hujan_rata_rata.sort_values('bulan', inplace=True)
-
     # Menggabungkan data untuk dikirim dalam format JSON
     data = {
-        'labels': curah_hujan_rata_rata['bulan'].tolist(),
+        'labels': curah_hujan_rata_rata['tahun'].astype(str).tolist(),
         'datasets': [
             {
                 'label': 'Akumulasi Curah Hujan',
@@ -123,19 +110,13 @@ def curah_hujan_maksimum(tahun=None, session=None):
 
     # Memilih data sesuai tahun yang dipilih
     df_year = pd.concat([df[df['tahun'] == t] for t in tahun_range])
-    df_year['bulan'] = df_year['bulan'].apply(lambda x: calendar.month_abbr[x])
     
     # Menghitung maksimum curah hujan per bulan
-    curah_hujan_maksimum = df_year.groupby('bulan')['curahhujan'].max().reset_index()
-    
-    # Urutkan berdasarkan bulan
-    months = calendar.month_abbr[1:13]
-    curah_hujan_maksimum['bulan'] = pd.Categorical(curah_hujan_maksimum['bulan'], categories=months, ordered=True)
-    curah_hujan_maksimum.sort_values('bulan', inplace=True)
+    curah_hujan_maksimum = df_year.groupby('tahun')['curahhujan'].max().reset_index()
 
     # Menggabungkan data untuk dikirim dalam format JSON
     data = {
-        'labels': curah_hujan_maksimum['bulan'].tolist(),
+        'labels': curah_hujan_maksimum['tahun'].astype(str).tolist(),
         'datasets': [
             {
                 'label': 'Maksimum Curah Hujan',

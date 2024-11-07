@@ -6,6 +6,7 @@ def wind_rose(tahun=None, session=None):
     df = session.query(DataFklim).all()
     df = pd.DataFrame([data.to_dict() for data in df])
 
+    # Handle year input as you already have
     if tahun is None:
         tahun_range = df['tahun'].unique()
     elif isinstance(tahun, str):
@@ -24,13 +25,16 @@ def wind_rose(tahun=None, session=None):
     df_filtered = df_filtered[df_filtered['anginkecmaks'] != 0]
 
     wind_rose_data = {}
-    for month in range(1, 13):
-        monthly_data = df_filtered[df_filtered['bulan'] == month]
-        if monthly_data.empty:
+    
+    # Change this part to group by year instead of month
+    for year in tahun_range:
+        yearly_data = df_filtered[df_filtered['tahun'] == year]
+        if yearly_data.empty:
             continue
 
-        month_avg_data = monthly_data.groupby('anginarah')['anginkecmaks'].mean().reset_index()
+        year_avg_data = yearly_data.groupby('anginarah')['anginkecmaks'].mean().reset_index()
 
+        # Set colors for different wind speeds
         colors = [
             'rgba(255, 0, 0, 0.6)' if speed <= 5 else
             'rgba(255, 165, 0, 0.6)' if speed <= 10 else
@@ -38,19 +42,20 @@ def wind_rose(tahun=None, session=None):
             'rgba(144, 238, 144, 0.6)' if speed <= 20 else
             'rgba(0, 128, 0, 0.6)' if speed <= 25 else
             '#12ffd3'
-            for speed in month_avg_data['anginkecmaks']
+            for speed in year_avg_data['anginkecmaks']
         ]
 
-        wind_rose_data[calendar.month_abbr[month]] = {
+        wind_rose_data[year] = {
             'datasets': [{
-                'label': f'Kecepatan Angin Rata-rata ({calendar.month_abbr[month]})',
-                'data': month_avg_data['anginkecmaks'].tolist(),
+                'label': f'Kecepatan Angin Rata-rata ({year})',
+                'data': year_avg_data['anginkecmaks'].tolist(),
                 'backgroundColor': colors
             }],
-            'labels': month_avg_data['anginarah'].tolist()
+            'labels': year_avg_data['anginarah'].tolist()
         }
 
     return wind_rose_data
+
 
 def chart_kecepatan_angin_tahun(tahun=None, session=None):
     df = session.query(DataFklim).all()
@@ -73,17 +78,17 @@ def chart_kecepatan_angin_tahun(tahun=None, session=None):
     df_year = pd.concat([df[df['tahun'] == t] for t in tahun_range])
     df_year = df_year[df_year['anginkecmaks'] != 0]
     
-    df_year['bulan'] = df_year['bulan'].apply(lambda x: calendar.month_abbr[x])
+    # df_year['bulan'] = df_year['bulan'].apply(lambda x: calendar.month_abbr[x])
     
-    kecepatan_angin_rata_rata = df_year.groupby('bulan')['anginkecmaks'].mean().reset_index()
+    kecepatan_angin_rata_rata = df_year.groupby('tahun')['anginkecmaks'].mean().reset_index()
     
-    months = calendar.month_abbr[1:13]
-    kecepatan_angin_rata_rata['bulan'] = pd.Categorical(kecepatan_angin_rata_rata['bulan'], categories=months, ordered=True)
-    kecepatan_angin_rata_rata = kecepatan_angin_rata_rata.sort_values('bulan')
+    # months = calendar.month_abbr[1:13]
+    # kecepatan_angin_rata_rata['bulan'] = pd.Categorical(kecepatan_angin_rata_rata['bulan'], categories=months, ordered=True)
+    # kecepatan_angin_rata_rata = kecepatan_angin_rata_rata.sort_values('bulan')
     
     # Prepare data for Chart.js
     data = {
-        'labels': kecepatan_angin_rata_rata['bulan'].tolist(),
+        'labels': kecepatan_angin_rata_rata['tahun'].astype(str).tolist(),
         'datasets': [{
             'label': 'Rata-rata Kecepatan Angin Maksimum',
             'data': kecepatan_angin_rata_rata['anginkecmaks'].round(2).tolist(),

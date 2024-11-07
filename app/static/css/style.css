@@ -117,6 +117,36 @@ a:hover {
   padding: 20px;
 }
 
+#contentToDownload4 {
+  background-color: white;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+#contentToDownloadBulan1 {
+  background-color: white;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+#contentToDownloadBulan2 {
+  background-color: white;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+#contentToDownloadBulan3 {
+  background-color: white;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+#contentToDownloadBulan4 {
+  background-color: white;
+  margin: 0 auto;
+  padding: 20px;
+}
+
 @media print {
   #contentToDownload1 {
       width: 100% !important;
@@ -129,6 +159,31 @@ a:hover {
     padding: 0 !important;
   }
   #contentToDownload3 {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  #contentToDownload4 {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  #contentToDownloadBulan1 {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  #contentToDownloadBulan2 {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  #contentToDownloadBulan3 {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  #contentToDownloadBulan4 {
     width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;

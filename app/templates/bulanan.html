@@ -473,8 +473,8 @@
 </script>
 <script>
     Swal.fire({
-        title: 'Loading...',
-        text: 'Memuat data visualisasi, mohon tunggu...',
+        title: 'Memuat Visualisasi Bulanan...',
+        text: 'Kami sedang menyusun data untuk visualisasi yang lebih baik. Terima kasih sudah menunggu! 👩‍🍳',
         allowOutsideClick: false,
         didOpen: () => {
             Swal.showLoading();
@@ -485,7 +485,7 @@
         Swal.close();
     });
 </script>
-<!-- <script>
+<script>
     async function downloadPDF(contentId, titleId) {
         const { jsPDF } = window.jspdf;
 
@@ -541,5 +541,5 @@
             console.error("Terjadi kesalahan saat membuat PDF:", error);
         }
     }
-</script> -->
+</script>
 {% endblock %}

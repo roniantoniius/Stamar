@@ -26,24 +26,18 @@ def prepare_suhu_data(tahun=None, session=None):
     # Memilih data sesuai tahun yang dipilih
     df_year = pd.concat([df[df['tahun'] == t] for t in tahun_range])
     df_year = df_year[(df_year['suhurata'] != 0) & (df_year['suhumaks'] != 0) & (df_year['suhumin'] != 0)]
-    df_year['bulan'] = df_year['bulan'].apply(lambda x: calendar.month_abbr[x])
     
     # Menghitung statistik suhu per bulan
-    suhu_rata_rata = df_year.groupby('bulan')['suhurata'].mean().reset_index()
-    suhu_maks_abs = df_year.groupby('bulan')['suhumaks'].max().reset_index()
-    suhu_maks = df_year.groupby('bulan')['suhumaks'].mean().reset_index()
-    suhu_min = df_year.groupby('bulan')['suhumin'].mean().reset_index()
-    suhu_min_abs = df_year.groupby('bulan')['suhumin'].min().reset_index()
-    
-    # Urutkan berdasarkan bulan
-    months = calendar.month_abbr[1:13]
-    for df in [suhu_rata_rata, suhu_maks_abs, suhu_maks, suhu_min, suhu_min_abs]:
-        df['bulan'] = pd.Categorical(df['bulan'], categories=months, ordered=True)
-        df.sort_values('bulan', inplace=True)
+    suhu_rata_rata = df_year.groupby('tahun')['suhurata'].mean().reset_index()
+    suhu_maks_abs = df_year.groupby('tahun')['suhumaks'].max().reset_index()
+    suhu_maks = df_year.groupby('tahun')['suhumaks'].mean().reset_index()
+    suhu_min = df_year.groupby('tahun')['suhumin'].mean().reset_index()
+    suhu_min_abs = df_year.groupby('tahun')['suhumin'].min().reset_index()
+
 
     # Menggabungkan data untuk dikirim dalam format JSON
     data = {
-        'labels': suhu_rata_rata['bulan'].tolist(),
+        'labels': suhu_rata_rata['tahun'].astype(str).tolist(),
         'datasets': [
             {
                 'label': 'Suhu Rata-Rata',
@@ -108,22 +102,14 @@ def prepare_kelembapan_data(tahun=None, session=None):
     # Memilih data sesuai tahun yang dipilih
     df_year = pd.concat([df[df['tahun'] == t] for t in tahun_range])
     df_year = df_year[(df_year['kelembapanrata'] != 0) & (df_year['kelembapanmaks'] != 0) & (df_year['kelembapanmin'] != 0)]
-    df_year['bulan'] = df_year['bulan'].apply(lambda x: calendar.month_abbr[x])
     
     # Menghitung statistik kelembapan per bulan
-    kelembapan_rata_rata = df_year.groupby('bulan')['kelembapanrata'].mean().reset_index()
-    kelembapan_maks = df_year.groupby('bulan')['kelembapanmaks'].mean().reset_index()
-    kelembapan_min = df_year.groupby('bulan')['kelembapanmin'].mean().reset_index()
-    
-    # Urutkan berdasarkan bulan
-    months = calendar.month_abbr[1:13]
-    for df in [kelembapan_rata_rata, kelembapan_maks, kelembapan_min]:
-        df['bulan'] = pd.Categorical(df['bulan'], categories=months, ordered=True)
-        df.sort_values('bulan', inplace=True)
+    kelembapan_rata_rata = df_year.groupby('tahun')['kelembapanrata'].mean().reset_index()
+    kelembapan_maks = df_year.groupby('tahun')['kelembapanmaks'].mean().reset_index()
+    kelembapan_min = df_year.groupby('tahun')['kelembapanmin'].mean().reset_index()
 
-    # Menggabungkan data untuk dikirim dalam format JSON
     data = {
-        'labels': kelembapan_rata_rata['bulan'].tolist(),
+        'labels': kelembapan_rata_rata['tahun'].astype(str).tolist(),
         'datasets': [
             {
                 'label': 'Kelembapan Rata-Rata',
@@ -174,22 +160,14 @@ def prepare_tekanan_data(tahun=None, session=None):
     # Memilih data sesuai tahun
     df_year = pd.concat([df[df['tahun'] == t] for t in tahun_range])
     df_year = df_year[df_year['tekananudara'] != 0]
-    df_year['bulan'] = df_year['bulan'].apply(lambda x: calendar.month_abbr[x])
 
     # Menghitung statistik tekanan per bulan
-    tekanan_rata_rata = df_year.groupby('bulan')['tekananudara'].mean().reset_index()
-    tekanan_maks = df_year.groupby('bulan')['tekananudara'].max().reset_index()
-    tekanan_min = df_year.groupby('bulan')['tekananudara'].min().reset_index()
+    tekanan_rata_rata = df_year.groupby('tahun')['tekananudara'].mean().reset_index()
+    tekanan_maks = df_year.groupby('tahun')['tekananudara'].max().reset_index()
+    tekanan_min = df_year.groupby('tahun')['tekananudara'].min().reset_index()
 
-    # Urutkan berdasarkan bulan
-    months = calendar.month_abbr[1:13]
-    for df in [tekanan_rata_rata, tekanan_maks, tekanan_min]:
-        df['bulan'] = pd.Categorical(df['bulan'], categories=months, ordered=True)
-        df.sort_values('bulan', inplace=True)
-
-    # Menyiapkan data untuk format JSON
     data = {
-        'labels': tekanan_rata_rata['bulan'].tolist(),
+        'labels': tekanan_rata_rata['tahun'].astype(str).tolist(),
         'datasets': [
             {
                 'label': 'Tekanan Rata-Rata',
