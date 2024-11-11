@@ -2,60 +2,84 @@ import calendar
 import pandas as pd
 from app.models import DataFklim
 
+def classify_speed(speed):
+    if speed <= 5:
+        return "0-5 m/s"
+    elif speed <= 10:
+        return "5-10 m/s"
+    elif speed <= 15:
+        return "10-15 m/s"
+    elif speed <= 20:
+        return "15-20 m/s"
+    elif speed <= 25:
+        return "20-25 m/s"
+    else:
+        return "25+ m/s"
+    
+def convert_to_direction(degrees):
+    # Normalize degrees to fall within 0-360 range
+    degrees = degrees % 360
+    
+    # Define the 8 cardinal and intercardinal directions
+    if 0 <= degrees < 22.5 or 337.5 <= degrees < 360:
+        return 'N'   # North
+    elif 22.5 <= degrees < 67.5:
+        return 'NE'  # North-East
+    elif 67.5 <= degrees < 112.5:
+        return 'E'   # East
+    elif 112.5 <= degrees < 157.5:
+        return 'SE'  # South-East
+    elif 157.5 <= degrees < 202.5:
+        return 'S'   # South
+    elif 202.5 <= degrees < 247.5:
+        return 'SW'  # South-West
+    elif 247.5 <= degrees < 292.5:
+        return 'W'   # West
+    elif 292.5 <= degrees < 337.5:
+        return 'NW'  # North-West
+    else:
+        return 'N'  # Default to North if something unexpected occurs
+
 def wind_rose(tahun=None, session=None):
     df = session.query(DataFklim).all()
     df = pd.DataFrame([data.to_dict() for data in df])
 
-    # Handle year input as you already have
+    # Filter by year as previously
     if tahun is None:
         tahun_range = df['tahun'].unique()
-    elif isinstance(tahun, str):
-        tahun_range = [int(tahun)]
-    elif isinstance(tahun, list) or isinstance(tahun, tuple):
-        if len(tahun) == 1:
-            tahun_range = list(tahun)
-        elif len(tahun) == 2:
-            tahun_range = list(range(int(tahun[0]), int(tahun[1]) + 1))
-        else:
-            raise ValueError("Input tahun harus berupa satu tahun atau dua tahun")
+    elif isinstance(tahun, (str, list, tuple)):
+        tahun_range = [int(tahun)] if isinstance(tahun, str) else list(range(int(tahun[0]), int(tahun[1]) + 1))
     else:
         raise ValueError("Input tahun harus berupa string, list, atau tuple")
 
     df_filtered = df[df['tahun'].isin(tahun_range)]
     df_filtered = df_filtered[df_filtered['anginkecmaks'] != 0]
-
-    wind_rose_data = {}
     
-    # Change this part to group by year instead of month
+    wind_rose_data = {}
+
+    # Initialize the list of all 8 directions
+    directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
+
     for year in tahun_range:
         yearly_data = df_filtered[df_filtered['tahun'] == year]
         if yearly_data.empty:
             continue
 
-        year_avg_data = yearly_data.groupby('anginarah')['anginkecmaks'].mean().reset_index()
+        yearly_data['direction'] = yearly_data['anginarah'].apply(convert_to_direction)
+        yearly_data['speed_category'] = yearly_data['anginkecmaks'].apply(classify_speed)
 
-        # Set colors for different wind speeds
-        colors = [
-            'rgba(255, 0, 0, 0.6)' if speed <= 5 else
-            'rgba(255, 165, 0, 0.6)' if speed <= 10 else
-            'rgba(255, 255, 0, 0.6)' if speed <= 15 else
-            'rgba(144, 238, 144, 0.6)' if speed <= 20 else
-            'rgba(0, 128, 0, 0.6)' if speed <= 25 else
-            '#12ffd3'
-            for speed in year_avg_data['anginkecmaks']
-        ]
+        # Initialize wind data with 0s for each direction and speed category
+        wind_data = {direction: {category: 0 for category in ["0-5 m/s", "5-10 m/s", "10-15 m/s", "15-20 m/s", "20-25 m/s", "25+ m/s"]}
+                     for direction in directions}
 
-        wind_rose_data[year] = {
-            'datasets': [{
-                'label': f'Kecepatan Angin Rata-rata ({year})',
-                'data': year_avg_data['anginkecmaks'].tolist(),
-                'backgroundColor': colors
-            }],
-            'labels': year_avg_data['anginarah'].tolist()
-        }
+        # Group by direction and speed category, then fill in the wind_data
+        for (direction, speed_category), count in (
+            yearly_data.groupby(['direction', 'speed_category']).size().items()):
+            wind_data[direction][speed_category] = count
+
+        wind_rose_data[year] = wind_data
 
     return wind_rose_data
-
 
 def chart_kecepatan_angin_tahun(tahun=None, session=None):
     df = session.query(DataFklim).all()
@@ -132,28 +156,22 @@ def generate_wind_rose_bulan(tahun=None, bulan=None, session=None):
         if monthly_data.empty:
             continue
 
-        month_avg_data = monthly_data.groupby('anginarah')['anginkecmaks'].mean().reset_index()
+        monthly_data['direction'] = monthly_data['anginarah'].apply(convert_to_direction)
+        monthly_data['speed_category'] = monthly_data['anginkecmaks'].apply(classify_speed)
 
-        colors = [
-            'rgba(255, 0, 0, 0.6)' if speed <= 5 else
-            'rgba(255, 165, 0, 0.6)' if speed <= 10 else
-            'rgba(255, 255, 0, 0.6)' if speed <= 15 else
-            'rgba(144, 238, 144, 0.6)' if speed <= 20 else
-            'rgba(0, 128, 0, 0.6)' if speed <= 25 else
-            '#12ffd3'
-            for speed in month_avg_data['anginkecmaks']
-        ]
+        # Initialize wind data with 0s for each direction and speed category
+        wind_data = {direction: {category: 0 for category in ["0-5 m/s", "5-10 m/s", "10-15 m/s", "15-20 m/s", "20-25 m/s", "25+ m/s"]}
+                     for direction in ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']}
 
-        wind_rose_data[calendar.month_abbr[month]] = {
-            'datasets': [{
-                'label': f'Average Wind Speed ({calendar.month_abbr[month]})',
-                'data': month_avg_data['anginkecmaks'].tolist(),
-                'backgroundColor': colors
-            }],
-            'labels': month_avg_data['anginarah'].tolist()
-        }
+        # Group by direction and speed category, then fill in the wind_data
+        for (direction, speed_category), count in (
+            monthly_data.groupby(['direction', 'speed_category']).size().items()):
+            wind_data[direction][speed_category] = count
+
+        wind_rose_data[calendar.month_abbr[month]] = wind_data
 
     return wind_rose_data
+
 
 def chart_kecepatan_angin_bulan(tahun=None, bulan=None, session=None):
     df = session.query(DataFklim).all()

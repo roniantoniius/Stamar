@@ -18,7 +18,6 @@ from app.resources.bulanan import bulanan_bp
 
 def create_app():
     app = Flask(__name__)
-    # konfigurasi tahap dev dan prod
     app.config['ENV'] = os.getenv('FLASK_ENV', 'production')
     if app.config['ENV'] == 'development':
         app.config.from_object('config.DevelopmentConfig')

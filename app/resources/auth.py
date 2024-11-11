@@ -1,16 +1,12 @@
 from flask import make_response, request, jsonify
 from flask_restx import Resource, Namespace, fields
-
-from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
-
-from app.resources.errors import InternalServerError, EmailAlreadyExistsError, EmailIsInvalidError, PasswordLengthError, UnauthorizedError
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
+from app.resources.errors import InternalServerError, EmailAlreadyExistsError, EmailIsInvalidError, PasswordLengthError, UnauthorizedError
 from app.models import User
 from app.exts import db
 import validators
 
-# ini kayak judul di endpoint docs
 auth_namespace = Namespace('auth', description='Namespace untuk autentikasi akun (login)')
 
 login_model = auth_namespace.model(
@@ -29,60 +25,73 @@ signup_model = auth_namespace.model(
 
 @auth_namespace.route('/login')
 class LoginResource(Resource):
-	@auth_namespace.expect(login_model)
-	def post(self):
-		try:
-			body = request.get_json()
-			user = User.query.filter_by(email=body.get('email')).first()
-			if user and check_password_hash(user.password, body.get('password')):
-				access_token = create_access_token(identity=user.id)
-				refresh_token = create_refresh_token(identity=user.id)
-				return jsonify({
-					'access_token': access_token, 'refresh_token': refresh_token
-				})
-			else:
-				raise UnauthorizedError
+    @auth_namespace.expect(login_model)
+    def post(self):
+        try:
+            body = request.get_json()
+            user = User.query.filter_by(email=body.get('email')).first()
+            
+            if user and check_password_hash(user.password, body.get('password')):
+                access_token = create_access_token(identity=user.id)
+                refresh_token = create_refresh_token(identity=user.id)
 
-		except UnauthorizedError:
-			raise UnauthorizedError
+                # Include the email in the response to pass to the frontend
+                return jsonify({
+                    'access_token': access_token,
+                    'refresh_token': refresh_token,
+                    'email': user.email
+                })
+            else:
+                raise UnauthorizedError
 
-		except Exception as e:
-			raise InternalServerError
+        except UnauthorizedError:
+            raise UnauthorizedError
+
+        except Exception as e:
+            raise InternalServerError
+
 
 @auth_namespace.route('/signup')
 class SignupResource(Resource):
-	@auth_namespace.expect(signup_model)
-	def post(self):
-		try:
-			body = request.get_json()
-			email = body.get('email')
-			user = User.query.filter_by(email=email).first()
-			if user:
-				raise EmailAlreadyExistsError
+    @auth_namespace.expect(signup_model)
+    def post(self):
+        try:
+            body = request.get_json()
+            email = body.get('email')
+            
+            # Check if user already exists
+            user = User.query.filter_by(email=email).first()
+            if user:
+                raise EmailAlreadyExistsError
 
-			if not validators.email(email):
-				raise EmailIsInvalidError
+            # Validate email format
+            if not validators.email(email):
+                raise EmailIsInvalidError
 
-			if len(body.get('password')) < 6:
-				raise PasswordLengthError
+            # Check password length
+            if len(body.get('password')) < 6:
+                raise PasswordLengthError
 
-			hashed_password = generate_password_hash(body.get('password'))
-			db.session.add(User(email=email, password=hashed_password))
-			db.session.commit()
-			return make_response(jsonify({
-				'message': 'Akun kamu berhasil dibuat :)'
-			}), 201)
-		except EmailAlreadyExistsError:
-			raise EmailAlreadyExistsError
+            # Hash the password
+            hashed_password = generate_password_hash(body.get('password'))
+            db.session.add(User(email=email, password=hashed_password))
+            db.session.commit()
+            
+            return make_response(jsonify({
+                'message': 'Akun kamu berhasil dibuat :)'
+            }), 201)
+        
+        except EmailAlreadyExistsError:
+            raise EmailAlreadyExistsError
 
-		except EmailIsInvalidError:
-			raise EmailIsInvalidError
+        except EmailIsInvalidError:
+            raise EmailIsInvalidError
 
-		except PasswordLengthError:
-			raise PasswordLengthError
+        except PasswordLengthError:
+            raise PasswordLengthError
 
-		except Exception as e:
-			raise InternalServerError
+        except Exception as e:
+            raise InternalServerError
 
 @auth_namespace.route('/refresh')
 class RefreshResource(Resource):

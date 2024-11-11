@@ -243,7 +243,7 @@ main .form-control:focus {
 .boxContainer {
   max-width: 600px;
   margin: auto;
-  background-color: #5dadec;
+  background-color: rgba(67, 199, 206, 0.7);
   box-shadow: -6px 10px 15px -5px rgba(167, 208, 255, 0.45);
   border: #004da413 1px solid;
 }

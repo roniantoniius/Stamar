@@ -62,12 +62,12 @@
     <div class="card" style="border-radius: 15px; background-color: white; padding: 20px;">
         <h3 id="containerTitle2" class="text-center" style="padding-bottom: 20px;">Data Arah Angin dan Kecepatan Maksimum</h3>
         <div class="row">
-            {% for year, data in wind_rose_data.items() %}
+            {% for year in wind_rose_data.keys() %}
                 <div class="col-md-6 mb-4">
                     <h4>{{ year }}</h4>
                     <div class="card" style="border-radius: 15px; background-color: white;">
                         <div class="card-body">
-                            <canvas id="windRoseChart_{{ year }}" width="400" height="400"></canvas>
+                            <div id="windRoseChart_{{ year }}" class="w-100" style="height: 400px;"></div>
                         </div>
                     </div>
                 </div>
@@ -195,8 +195,87 @@
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Data dari server
         const windRoseData = {{ wind_rose_data|tojson }};
+    
+        // Color map for each speed category
+        const speedColors = {
+            "0-5 m/s": 'rgba(255, 0, 0, 0.6)',
+            "5-10 m/s": 'rgba(255, 165, 0, 0.6)',
+            "10-15 m/s": 'rgba(255, 255, 0, 0.6)',
+            "15-20 m/s": 'rgba(144, 238, 144, 0.6)',
+            "20-25 m/s": 'rgba(0, 128, 0, 0.6)',
+            "25+ m/s": 'rgba(0, 255, 255, 0.6)'
+        };
+    
+        // Define the 8 cardinal and intercardinal directions
+        const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+
+        Object.keys(windRoseData).forEach(function(year) {
+            const chartContainerId = `windRoseChart_${year}`;
+            const data = windRoseData[year];
+
+            // Initialize the data to be displayed
+            const seriesData = Object.keys(speedColors).map(category => {
+                return {
+                    name: category,
+                    data: directions.map(direction => {
+                        return data[direction] ? data[direction][category] : 0;  // Default to 0 if no data
+                    }),
+                    color: speedColors[category]
+                };
+            });
+    
+            Highcharts.chart(chartContainerId, {
+                chart: {
+                    polar: true,
+                    type: 'column',
+                    width: document.getElementById(chartContainerId).offsetWidth,
+                    height: document.getElementById(chartContainerId).offsetHeight
+                },
+                pane: {
+                    size: '100%'
+                },
+                title: {
+                    text: null
+                },
+                xAxis: {
+                    categories: directions,
+                    tickmarkPlacement: 'on',
+                    lineWidth: 0
+                },
+                yAxis: {
+                    min: 0,
+                    endOnTick: false,
+                    showLastLabel: true,
+                    title: {
+                        text: 'Frequency (%)'
+                    },
+                    labels: {
+                        format: '{value}%'
+                    },
+                    reversedStacks: false
+                },
+                tooltip: {
+                    shared: true,
+                    pointFormat: '{series.name}: <b>{point.y}%</b><br/>'
+                },
+                plotOptions: {
+                    column: {
+                        stacking: 'normal',
+                        shadow: false,
+                        groupPadding: 0,
+                        pointPlacement: 'on'
+                    }
+                },
+                series: seriesData
+            });
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Data dari server
         const kecepatanAnginData = {{ kecepatan_angin_data|tojson }};
         const suhuData = {{ suhu_data|tojson }};
         const kelembapanData = {{ kelembapan_data|tojson }};
@@ -205,75 +284,6 @@
         const akumulasiHujanData = {{ akumulasi_hujan|tojson }};
         const hujanMaks = {{ maks_hujan|tojson }};
         const cuacaData = {{ cuaca_data|tojson }};
-
-        // viz wind rose
-        Object.keys(windRoseData).forEach(function(year) {
-            const ctx = document.getElementById(`windRoseChart_${year}`).getContext('2d');
-            const data = windRoseData[year]['datasets'][0]['data'];
-            const labels = windRoseData[year]['labels'];
-
-            // Definisikan rentang kecepatan angin dan warna yang sesuai
-            const ranges = [
-                { max: 5, color: 'rgba(255, 0, 0, ' },
-                { max: 10, color: 'rgba(255, 165, 0, ' },
-                { max: 15, color: 'rgba(255, 255, 0, ' },
-                { max: 20, color: 'rgba(144, 238, 144, ' },
-                { max: 25, color: 'rgba(0, 128, 0, ' },
-                { max: Infinity, color: 'rgba(0, 255, 255, ' }
-            ];
-
-            // Buat dataset untuk setiap rentang
-            const datasets = ranges.map((range, index) => {
-                return {
-                    label: `${index === 0 ? '0' : ranges[index-1].max} - ${range.max} km/h`,
-                    data: data.map(value => value > range.max ? range.max : (value < (index === 0 ? 0 : ranges[index-1].max) ? null : value)),
-                    backgroundColor: range.color + '0.6)',
-                    borderColor: range.color + '1)',
-                    borderWidth: 1,
-                    fill: true
-                };
-            });
-
-            new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: labels,
-                    datasets: datasets
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        r: {
-                            angleLines: { display: false },
-                            suggestedMin: 0,
-                            suggestedMax: 25,
-                            ticks: {
-                                stepSize: 5,
-                                callback: function(value) {
-                                    return value + ' km/h';
-                                }
-                            },
-                            pointLabels: {
-                                callback: function(label, index) {
-                                    if (index % 45 === 0) {
-                                        const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
-                                        return directions[index / 45];
-                                    }
-                                    return '';
-                                }
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: { position: 'top' },
-                        filler: { propagate: false }
-                    },
-                    elements: {
-                        line: { tension: 0 } // membuat garis lurus
-                    }
-                }
-            });
-        });
         
         // Chart Kecepatan Angin
         new Chart(document.getElementById('kecepatanAnginChart'), {

@@ -4,9 +4,11 @@
 
 <div style="display: flex; flex-direction: column; align-items: flex-start; width: 100%; padding-top: 40px;">
     <section class="py-5" style="margin: 0; padding-left: 93px; width: 100%;">
-        <div id="homeBox" class="boxContainer text-center rounded-3" style="width: 100%; margin: 0; flex-grow: 1;">
-            <h1 class="my-5">Upload Data</h1>
-        </div>
+        <a href="#" id="dataLink" style="text-decoration: none;">
+            <div id="homeBox" class="boxContainer text-center rounded-3" style="width: 100%; margin: 0; flex-grow: 1;">
+                <h1 class="my-5">Upload Data</h1>
+            </div>
+        </a>
     </section>
 
     <section style="padding-left: 93px;">
@@ -168,6 +170,31 @@
                 }
             });
         });
+    });
+</script>
+<script>
+    document.getElementById('dataLink').addEventListener('click', function(event) {
+        event.preventDefault(); 
+        const isLoggedIn = localStorage.getItem('access_token');
+
+        if (!isLoggedIn) {
+            Swal.fire({
+                title: 'Oops!',
+                text: 'Whoaa, kamu perlu login terlebih dahulu!',
+                icon: 'warning',
+                showCancelButton: false,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Baik',
+                cancelButtonText: 'Lain kali',
+                allowOutsideClick: false,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/login';
+                }
+            });
+        } else {
+            window.location.href = '/'; 
+        }
     });
 </script>
 {% endblock %}
