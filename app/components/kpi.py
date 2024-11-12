@@ -88,3 +88,38 @@ def kpi_iklim_bulan(tahun=None, bulan=None, session=None):
         kpi_data.extend(calculate_kpi(column, parameter))
 
     return kpi_data
+
+def get_last_update(session):
+    # Ambil data dari database dan konversi menjadi DataFrame
+    df = pd.DataFrame([data.to_dict() for data in session.query(DataFklim).all()])
+
+    # Temukan tahun terbaru
+    last_year = df['tahun'].max()
+
+    # Filter data untuk tahun terbaru
+    df_last_year = df[df['tahun'] == last_year]
+
+    # Temukan bulan terbaru pada tahun terakhir
+    last_month = df_last_year['bulan'].max()
+
+    # Filter data untuk bulan terbaru
+    df_last_month = df_last_year[df_last_year['bulan'] == last_month]
+
+    # Temukan tanggal terbaru pada bulan terakhir
+    last_day = df_last_month['tgl'].max()
+
+    # Ambil baris data dengan tanggal terakhir
+    last_update = df_last_month[df_last_month['tgl'] == last_day].iloc[0]
+
+    # Mengonversi bulan menjadi teks dalam bahasa Indonesia
+    months_in_indonesia = [
+        "Januari", "Februari", "Maret", "April", "Mei", "Juni", 
+        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    ]
+
+    month_name = months_in_indonesia[last_month - 1]  # bulan dalam DataFrame mulai dari 1
+
+    # Format tanggal dalam bentuk 'dd MMMM yyyy'
+    formatted_date = f"{last_day} {month_name} {last_year}"
+
+    return formatted_date
