@@ -47,68 +47,9 @@ class DataFklim(db.Model):
     kelembapanmaks = db.Column(db.Integer, nullable=True)
     kelembapanmin = db.Column(db.Integer, nullable=True)
 
-    def __init__(self, nosta, namasta, tahun, bulan, tgl, suhu7, suhu13, suhu18,
-                 suhurata, suhumaks, suhumin, curahhujan, sinarmatahari,
-                 cuaca, tekananudara, kelembapan7, kelembapan13,
-                 kelembapan18, kelembapanrata, anginkecrata, anginarah,
-                 anginkecmaks, anginarahrata, waktu, bulan_teks,
-                 kelembapanmaks, kelembapanmin):
-        self.nosta = nosta
-        self.namasta = namasta
-        self.tahun = tahun
-        self.bulan = bulan
-        self.tgl = tgl
-        self.suhu7 = suhu7
-        self.suhu13 = suhu13
-        self.suhu18 = suhu18
-        self.suhurata = suhurata
-        self.suhumaks = suhumaks
-        self.suhumin = suhumin
-        self.curahhujan = curahhujan
-        self.sinarmatahari = sinarmatahari
-        self.cuaca = cuaca
-        self.tekananudara = tekananudara
-        self.kelembapan7 = kelembapan7
-        self.kelembapan13 = kelembapan13
-        self.kelembapan18 = kelembapan18
-        self.kelembapanrata = kelembapanrata
-        self.anginkecrata = anginkecrata
-        self.anginarah = anginarah
-        self.anginkecmaks = anginkecmaks
-        self.anginarahrata = anginarahrata
-        self.waktu = waktu
-        self.bulan_teks = bulan_teks
-        self.kelembapanmaks = kelembapanmaks
-        self.kelembapanmin = kelembapanmin
+    def __init__(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
     def to_dict(self):
-        return {
-            'id': self.id,
-            'nosta': self.nosta,
-            'namasta': self.namasta,
-            'tahun': self.tahun,
-            'bulan': self.bulan,
-            'tgl': self.tgl,
-            'suhu7': self.suhu7,
-            'suhu13': self.suhu13,
-            'suhu18': self.suhu18,
-            'suhurata': self.suhurata,
-            'suhumaks': self.suhumaks,
-            'suhumin': self.suhumin,
-            'sinarmatahari': self.sinarmatahari,
-            'curahhujan': self.curahhujan,
-            'cuaca': self.cuaca,
-            'tekananudara': self.tekananudara,
-            'kelembapan7': self.kelembapan7,
-            'kelembapan13': self.kelembapan13,
-            'kelembapan18': self.kelembapan18,
-            'kelembapanrata': self.kelembapanrata,
-            'anginkecrata': self.anginkecrata,
-            'anginarah': self.anginarah,
-            'anginkecmaks': self.anginkecmaks,
-            'anginarahrata': self.anginarahrata,
-            'waktu': self.waktu,
-            'bulan_teks': self.bulan_teks,
-            'kelembapanmaks': self.kelembapanmaks,
-            'kelembapanmin': self.kelembapanmin
-        }
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns}
